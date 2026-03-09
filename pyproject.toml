@@ -1,0 +1,43 @@
+[project]
+name = "ai-sa-portfolio"
+version = "0.1.0"
+description = "AI Solutions Architect Portfolio Monorepo - Phase 4 Unified Architecture"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+# System dependencies
+s1-cost = ["boto3>=1.42.63"]
+s2-pipeline = []  # TBD
+s3-ha = []        # TBD
+s4-observability = []  # TBD
+
+# Portfolio dependencies
+rag-qa = []       # TBD
+multi-agent = []  # TBD
+mcp-devops = []   # TBD
+
+# Development dependencies
+dev = [
+    "pytest>=7.0",
+    "black>=22.0",
+    "ruff>=0.1",
+    "mypy>=1.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+strict = true

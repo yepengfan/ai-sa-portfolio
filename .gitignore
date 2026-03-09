@@ -1,0 +1,116 @@
+# AI SA Portfolio Monorepo - Global .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# AWS credentials and secrets
+.aws/
+aws-credentials.env
+*.pem
+*.key
+
+# System-specific generated files
+systems/*/results/
+systems/*/*.csv
+systems/*/*.json
+systems/*/*.jsonl
+
+# Portfolio project generated files
+portfolio/*/build/
+portfolio/*/dist/
+portfolio/*/results/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+systems/*/logs/
+portfolio/*/logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+.cache/
+
+# S3 and batch processing
+batch-input/
+batch-output/
+bedrock-batch-*/
+
+# Node.js (for any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.dockerignore
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Development tools
+.mypy_cache/
+.ruff_cache/

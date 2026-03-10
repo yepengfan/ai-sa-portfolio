@@ -1,0 +1,201 @@
+{
+  "total_tests": 9,
+  "successful_tests": 9,
+  "failed_tests": 0,
+  "average_compression_ratio": 0.8244614656819914,
+  "average_processing_time": 1.410848167207506,
+  "dataset_results": {
+    "short_queries": [
+      {
+        "test_name": "simple_question",
+        "category": "educational",
+        "original_length": 46,
+        "success": true,
+        "processing_time": 3.0994415283203125e-06,
+        "compressed_text": "What is machine learning and how does it work?",
+        "metrics": {
+          "original_length": 46,
+          "compressed_length": 46,
+          "compression_ratio": 1.0,
+          "compression_percent": 0.0,
+          "semantic_preservation": 1.0
+        },
+        "error": null,
+        "compressed_length": 46
+      },
+      {
+        "test_name": "code_request",
+        "category": "coding",
+        "original_length": 89,
+        "success": true,
+        "processing_time": 9.5367431640625e-07,
+        "compressed_text": "Please write a Python function that calculates the factorial of a number using recursion.",
+        "metrics": {
+          "original_length": 89,
+          "compressed_length": 89,
+          "compression_ratio": 1.0,
+          "compression_percent": 0.0,
+          "semantic_preservation": 1.0
+        },
+        "error": null,
+        "compressed_length": 89
+      },
+      {
+        "test_name": "explanation_request",
+        "category": "educational",
+        "original_length": 92,
+        "success": true,
+        "processing_time": 9.5367431640625e-07,
+        "compressed_text": "Can you explain the difference between supervised and unsupervised learning in simple terms?",
+        "metrics": {
+          "original_length": 92,
+          "compressed_length": 92,
+          "compression_ratio": 1.0,
+          "compression_percent": 0.0,
+          "semantic_preservation": 1.0
+        },
+        "error": null,
+        "compressed_length": 92
+      }
+    ],
+    "medium_prompts": [
+      {
+        "test_name": "detailed_instruction",
+        "category": "project_planning",
+        "original_length": 421,
+        "success": true,
+        "processing_time": 3.04338002204895,
+        "compressed_text": "# Compressed Version (210 characters):\n\nCreate a web app enabling CSV upload, data validation/cleaning, and visualization generation. Features needed: file upload, multiple chart types (bar, line, pie), interactive dashboards, and PDF export. Request detailed implementation plan with tech recommendations.\n\n**Character count: 207**",
+        "metrics": {
+          "original_length": 421,
+          "compressed_length": 332,
+          "compression_ratio": 0.7885985748218527,
+          "compression_percent": 21.14,
+          "target_length": 210,
+          "target_achieved": false,
+          "semantic_preservation": 0.9,
+          "summarization_tokens_used": 233
+        },
+        "error": null,
+        "compressed_length": 332
+      },
+      {
+        "test_name": "technical_explanation",
+        "category": "technical_deep_dive",
+        "original_length": 300,
+        "success": true,
+        "processing_time": 1.8844599723815918,
+        "compressed_text": "# Compressed Version (150 characters):\n\nPostgreSQL indexing: types (B-tree, Hash, GiST, GIN, BRIN), use cases, query performance impact, maintenance best practices, and query speed vs",
+        "metrics": {
+          "original_length": 300,
+          "compressed_length": 183,
+          "compression_ratio": 0.61,
+          "compression_percent": 39.0,
+          "target_length": 150,
+          "target_achieved": false,
+          "semantic_preservation": 0.9,
+          "summarization_tokens_used": 193
+        },
+        "error": null,
+        "compressed_length": 183
+      },
+      {
+        "test_name": "troubleshooting_scenario",
+        "category": "debugging",
+        "original_length": 363,
+        "success": true,
+        "processing_time": 2.099498987197876,
+        "compressed_text": "React app performance issues: slow rendering of large data lists, UI freezes during API calls. Uses Redux state management, frequent API calls, complex component trees. Need: bottleneck identification and optimization strategies.\n\n(181 characters)",
+        "metrics": {
+          "original_length": 363,
+          "compressed_length": 247,
+          "compression_ratio": 0.6804407713498623,
+          "compression_percent": 31.96,
+          "target_length": 181,
+          "target_achieved": false,
+          "semantic_preservation": 0.9,
+          "summarization_tokens_used": 204
+        },
+        "error": null,
+        "compressed_length": 247
+      }
+    ],
+    "long_contexts": [
+      {
+        "test_name": "comprehensive_guide",
+        "category": "system_design",
+        "original_length": 1003,
+        "success": true,
+        "processing_time": 2.39017391204834,
+        "compressed_text": "# Compressed Version (501 characters):\n\nI'm building an e-commerce platform needing guidance on complete architecture. Requirements: user authentication/authorization, product catalog with categories/search, shopping cart/wishlist, multiple payment gateways, order management/tracking, inventory management, reviews/ratings, email notifications, admin dashboard, analytics, mobile APIs, and scalability for thousands of concurrent users. I need modern technologies following security, performance, and maintainability best practices. Provide technical architecture including database design, API structure, security considerations, deployment strategies, monitoring/logging, testing approaches, potential challenges, and recommended technology stack for frontend and backend.",
+        "metrics": {
+          "original_length": 1003,
+          "compressed_length": 775,
+          "compression_ratio": 0.7726819541375872,
+          "compression_percent": 22.73,
+          "target_length": 501,
+          "target_achieved": false,
+          "semantic_preservation": 0.9,
+          "summarization_tokens_used": 386
+        },
+        "error": null,
+        "compressed_length": 775
+      },
+      {
+        "test_name": "research_analysis",
+        "category": "research_analysis",
+        "original_length": 784,
+        "success": true,
+        "processing_time": 2.256408929824829,
+        "compressed_text": "# Compressed Version (392 characters):\n\nAnalyze AI's current healthcare impact across diagnostic imaging, drug discovery, personalized medicine, and clinical decision support. Cover key technologies, major industry players, recent breakthroughs with clinical implications, regulatory challenges, ethical concerns (bias, privacy), economic impact, integration with hospital systems, professional training needs, patient trust, data standardization issues, and 5-10 year predictions. Include specific successful AI implementations from major healthcare systems.",
+        "metrics": {
+          "original_length": 784,
+          "compressed_length": 559,
+          "compression_ratio": 0.7130102040816326,
+          "compression_percent": 28.7,
+          "target_length": 392,
+          "target_achieved": false,
+          "semantic_preservation": 0.9,
+          "summarization_tokens_used": 317
+        },
+        "error": null,
+        "compressed_length": 559
+      }
+    ],
+    "conversation_contexts": [
+      {
+        "test_name": "ongoing_discussion",
+        "category": "follow_up",
+        "original_length": 166,
+        "success": true,
+        "processing_time": 1.0237066745758057,
+        "compressed_text": "Following up on microservices architecture, exploring service communication patterns and data consistency challenges.\n\n(83 characters exactly)",
+        "metrics": {
+          "original_length": 166,
+          "compressed_length": 142,
+          "compression_ratio": 0.8554216867469879,
+          "compression_percent": 14.46,
+          "target_length": 83,
+          "target_achieved": false,
+          "semantic_preservation": 0.95,
+          "summarization_tokens_used": 142
+        },
+        "error": null,
+        "compressed_length": 142
+      }
+    ]
+  },
+  "performance_metrics": {
+    "average_compression_ratio": 0.8244614656819914,
+    "compression_savings_percent": 17.55385343180086,
+    "average_processing_time": 1.410848167207506,
+    "success_rate_percent": 100.0,
+    "effectiveness_score": 0.6194484709936191,
+    "best_compression_ratio": 0.61,
+    "worst_compression_ratio": 1.0,
+    "fastest_processing_time": 9.5367431640625e-07,
+    "slowest_processing_time": 3.04338002204895
+  },
+  "compression_ratio_std": 0.1485446883547376,
+  "processing_time_std": 1.181053678350246
+}

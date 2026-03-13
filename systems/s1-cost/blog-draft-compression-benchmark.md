@@ -1,8 +1,8 @@
-# Benchmarking 8 LLM Cost Optimization Strategies on Amazon Bedrock: What Actually Saves Money?
+# AI Inference Eats 80% of Your Budget? I Benchmarked 4 Strategies to Cut It
 
-LLM inference costs add up fast. A single Claude Sonnet 4 call with a 3,000-token input costs ~$0.025 — at 1,000 calls per day, that's $750/month. The industry offers many optimization strategies: prompt compression, prompt caching, model routing, batch processing. Each promises significant savings, but how do they actually perform?
+LLM inference costs add up fast. A single Claude Sonnet 4 call with a 3,000-token input costs ~$0.025 — at 1,000 calls per day, that's $750/month. For most AI applications, inference is the dominant cost, far exceeding development or infrastructure. The industry offers many optimization strategies: prompt compression, prompt caching, model routing, batch processing. Each promises significant savings, but how do they actually perform?
 
-I built and benchmarked 8 strategies on Amazon Bedrock with real API calls, real cost measurements, and academic evaluation datasets. The results challenge some common assumptions about what works best.
+I built and benchmarked 4 strategies (with 8 technique variants) on Amazon Bedrock with real API calls, real cost measurements, and the LongBench academic evaluation dataset. The results challenge some common assumptions about what works best.
 
 ## The 5 Compression Strategies
 

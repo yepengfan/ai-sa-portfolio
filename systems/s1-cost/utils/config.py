@@ -12,11 +12,23 @@ MODELS = {
         "name": "Claude Haiku 4.5"
     },
     "sonnet": {
-        "id": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "id": "us.anthropic.claude-sonnet-4-20250514-v1:0",
         "input_cost_per_1k": 0.003,
         "output_cost_per_1k": 0.015,
-        "name": "Claude Sonnet 3.5"
+        "name": "Claude Sonnet 4"
     }
+}
+
+# Pricing lookup (per 1K tokens) — used by benchmark scripts
+PRICING = {
+    "sonnet": {"input": 0.003, "output": 0.015},
+    "haiku":  {"input": 0.000125, "output": 0.000625},
+    # Caching: write = 1.25x input, read = 0.1x input
+    "sonnet_cache_write": 0.00375,
+    "sonnet_cache_read":  0.0003,
+    # Batch: 50% of on-demand
+    "sonnet_batch": {"input": 0.0015, "output": 0.0075},
+    "haiku_batch":  {"input": 0.0000625, "output": 0.0003125},
 }
 
 # AWS configuration

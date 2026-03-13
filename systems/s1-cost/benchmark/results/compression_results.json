@@ -1,0 +1,78 @@
+{
+  "system_prompt_tokens": 1877,
+  "baseline_user_msg_tokens": 1172,
+  "baseline": {
+    "input_tokens": 3049,
+    "output_tokens": 512,
+    "cost": 0.016827
+  },
+  "baseline_output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows strong technical foundations with modern serverless and containerized components, but significant cost optimization opportunities exist. The current $47,000/month spend can be reduced by approximately 35-40% through strategic optimizations, with the largest savings coming from commitment-based pricing, intelligent storage tiering, and infrastructure right-sizing.\n\n## Top 5 Cost Optimization Recommendations (Ordered by Impact)\n\n### 1. Implement Comprehensive Commitment-Based Pricing Strategy\n**What to change:** Purchase Reserved Instances and Savings Plans for predictable workloads\n**Services:** RDS Reserved Instances, Redshift Reserved Instances, Compute Savings Plans\n**Estimated savings:** $4,680/month (10% total cost reduction)\n**Implementation complexity:** Low\n\n**Specific actions:**\n- Purchase 3x db.r6g.2xlarge RDS 1-year No Upfront Reserved Instances: Save $819/month (37% off current $2,247/month for primary + 2 replicas)\n- Purchase 6x ra3.4xlarge Redshift 1-year No Upfront Reserved Instances: Save $3,528/month (36% off current $9,800/month)\n- Purchase 1-year Compute Savings Plan covering baseline Fargate usage (minimum 8 tasks for main API + 4 background workers + 20 microservice tasks = ~$4,500/month baseline): Save $333/month (17% off baseline compute)\n\n### 2. Optimize Redshift Cluster with Pause/Resume Automation\n**What to change:** Implement automated pause/resume for off-peak hours and right-size cluster\n**Services:** Redshift, EventBridge, Lambda\n**Estimated savings:** $2,940/month (6.3% total cost reduction)\n**Implementation complexity:** Medium\n\n**Specific actions:**\n- Automate cluster pause from 11pm-6am EST (7 hours daily): Save $2,058/month (30% reduction in cluster runtime)\n- Right-size from 6 nodes to 4 nodes ra3.4xlarge based on current utilization patterns: Save $1,564/month\n- Net savings after accounting for",
+  "strategies": {
+    "manual_refiner": {
+      "input_tokens": 3000,
+      "output_tokens": 512,
+      "compression_pct": 1.6070842899311266,
+      "user_msg_compress_pct": 4.180887372013653,
+      "sonnet_cost": 0.01668,
+      "haiku_cost": 0,
+      "total_cost": 0.01668,
+      "net_saving_pct": 0.873596006418264,
+      "output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows strong technical foundations with modern serverless and containerized components, but significant cost optimization opportunities exist. The current $47,000/month spend can be reduced by approximately **$18,500-22,000 monthly (39-47% savings)** through strategic optimizations focused on commitment-based pricing, intelligent storage tiering, and infrastructure right-sizing.\n\n## Top 5 Cost Optimization Recommendations (Ordered by Impact)\n\n### 1. Implement Comprehensive Commitment-Based Pricing Strategy\n**What to change:** Purchase Reserved Instances and Savings Plans for predictable workloads\n**Services:** RDS Reserved Instances, Redshift Reserved Instances, Compute Savings Plans\n**Estimated savings:** $6,200-7,800/month (13-17% total cost reduction)\n**Implementation complexity:** Low\n\n**Specific actions:**\n- **RDS PostgreSQL:** Purchase 1-year No Upfront RIs for primary + 2 read replicas\n  - Current cost: $4,200/month → New cost: $2,646/month\n  - **Savings: $1,554/month (37% reduction)**\n- **Redshift cluster:** Purchase 1-year No Upfront RIs for 6 ra3.4xlarge nodes\n  - Current cost: $9,800/month → New cost: $6,267/month  \n  - **Savings: $3,533/month (36% reduction)**\n- **ECS Fargate:** Purchase 1-year Compute Savings Plan covering baseline capacity\n  - Commit to ~$8,000/month (covering 65% of current Fargate spend)\n  - **Savings: $1,360/month (17% reduction on committed portion)**\n\n### 2. Optimize Redshift Cluster with Pause/Resume and Right-Sizing\n**What to change:** Implement automated pause/resume schedule and reduce cluster size\n**Services:** Redshift with EventBridge scheduling, potentially resize to 4 nodes\n**Estimated savings:** $4,200-5,600/month (9-12% total cost reduction)\n**Implementation complexity:** Medium\n\n**Specific actions:**\n- **Automated pause/resume:**"
+    },
+    "semantic_summarizer": {
+      "input_tokens": 2661,
+      "output_tokens": 512,
+      "compression_pct": 12.72548376516891,
+      "user_msg_compress_pct": 33.10580204778157,
+      "sonnet_cost": 0.015663,
+      "haiku_cost": 0.000647625,
+      "total_cost": 0.016310625,
+      "net_saving_pct": 3.068728828668229,
+      "output_text": "## Cost Optimization Analysis for B2B SaaS Analytics Platform\n\n### Current Architecture Assessment\n\nYour B2B SaaS analytics platform has a solid foundation but significant cost optimization opportunities. The $47,000/month spend with 100% on-demand pricing represents the highest-cost approach. The architecture shows good practices with Graviton processors and appropriate service selection, but lacks commitment-based discounts, storage lifecycle management, and right-sizing optimizations.\n\n## Top 5 Recommendations (Ordered by Impact)\n\n### 1. Implement Comprehensive Reserved Instances and Savings Plans\n**What to change:** Purchase 1-year Reserved Instances for stable workloads and Compute Savings Plans for variable workloads\n**AWS Services:** Reserved Instances (RDS, Redshift, ElastiCache), Compute Savings Plans (Fargate)\n**Estimated savings:** $10,800/month (23% reduction)\n**Implementation complexity:** Low\n\n**Breakdown:**\n- Redshift 6x ra3.4xlarge 1-yr RI: $8,959/month vs $14,083/month = $5,124/month savings\n- RDS db.r6g.2xlarge + 2 replicas 1-yr RI: $1,426/month vs $2,245/month = $819/month savings  \n- ElastiCache 3x r6g.xlarge 1-yr RI: $747/month vs $1,041/month = $294/month savings\n- Compute Savings Plan 1-yr for baseline Fargate (4 persistent tasks): $4,563/month vs $5,000/month = $437/month savings\n- Total: $10,674/month savings\n\n### 2. Optimize S3 Storage with Intelligent Lifecycle Policies\n**What to change:** Implement automated storage class transitions for 45TB of event data\n**AWS Services:** S3 Intelligent-Tiering, S3 Glacier Deep Archive, S3 Lifecycle policies\n**Estimated savings:** $900/month (80% of S3 storage costs)\n**Implementation complexity:** Low\n\n**Breakdown:**\n- Current: 45TB × $0.023/GB = $1,058/month"
+    },
+    "relevance_filter": {
+      "input_tokens": 2203,
+      "output_tokens": 512,
+      "compression_pct": 27.74680223023942,
+      "user_msg_compress_pct": 72.18430034129693,
+      "sonnet_cost": 0.014289,
+      "haiku_cost": 0,
+      "total_cost": 0.014289,
+      "net_saving_pct": 15.08290247816011,
+      "output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows good architectural choices with Graviton-based Fargate and appropriate data pipeline design. However, there are significant cost optimization opportunities, particularly around your Redshift cluster utilization patterns and storage lifecycle management. The $47,000 monthly spend can be reduced by approximately 25-30% through strategic optimizations.\n\n## Top 3 Cost Optimization Strategies\n\n### 1. Implement Redshift Pause/Resume with Scheduled Scaling\n**Current Cost:** $14,082/month (6 × ra3.4xlarge nodes at $2,347.20/month each)\n**Optimization:** Configure Redshift to automatically pause during low-usage hours (11pm-6am EST, 7 hours daily) and implement Reserved Instance pricing.\n\n**Implementation:**\n- Use AWS Lambda with EventBridge to pause cluster at 11pm EST and resume at 6am EST\n- Purchase 6 × ra3.4xlarge 1-year No Upfront Reserved Instances\n- Maintain 1-2 nodes active during pause periods for critical monitoring queries\n\n**Estimated Monthly Savings:** $6,240\n- RI savings: $5,124/month (6 nodes × ($2,347.20 - $1,493.28))\n- Pause savings: $1,116/month (29% uptime reduction × 4 nodes × $2,347.20 × 0.29)\n- **Total: 44% reduction in Redshift costs**\n\n**Implementation Complexity:** Medium\n\n### 2. Optimize S3 Storage with Intelligent-Tiering and Lifecycle Policies\n**Current Cost:** $1,035/month (45 TB × $0.023/GB-month)\n**Optimization:** Implement S3 Intelligent-Tiering for automatic cost optimization and lifecycle transitions for compliance retention.\n\n**Implementation:**\n- Enable S3 Intelligent-Tiering on existing 45 TB of data\n- Configure lifecycle policy: Standard → Intelligent-Tiering (immediate) → Glacier Instant Retrieval (after 90 days) → Glacier Deep Archive (after 12 months for compliance-only access)\n- Assume 60% of data becomes infr"
+    },
+    "structure_optimizer": {
+      "input_tokens": 2129,
+      "output_tokens": 512,
+      "compression_pct": 30.173827484421125,
+      "user_msg_compress_pct": 78.49829351535837,
+      "sonnet_cost": 0.014067,
+      "haiku_cost": 0,
+      "total_cost": 0.014067,
+      "net_saving_pct": 16.402210732750948,
+      "output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows several cost optimization opportunities. With monthly costs of ~$26,500+ across compute ($12,500), Redshift ($9,800), RDS ($4,200), and Kinesis provisioned shards, there are significant savings available through right-sizing, reserved capacity, and architectural improvements.\n\n## Top 5 Cost Optimization Recommendations\n\n### 1. **Redshift Reserved Instances + Right-sizing** \n**Impact: $3,528/month savings (36% reduction)**\n- **Change**: Purchase 1-year No Upfront Reserved Instances for your 6-node ra3.4xlarge cluster\n- **Service**: Amazon Redshift Reserved Instances\n- **Savings**: $9,800 → $6,272/month ($3,528 monthly savings)\n- **Implementation**: Low complexity - purchase through AWS console\n- **Additional**: Evaluate if workload can run on 4-5 nodes with better query optimization\n\n### 2. **Kinesis Data Streams On-Demand Migration**\n**Impact: $800-1,200/month savings (60-75% reduction)**\n- **Change**: Migrate from 24 provisioned shards to Kinesis On-Demand\n- **Current cost**: 24 shards × $0.015/hour × 730 hours = $262.80/month + PUT charges\n- **New cost**: Based on actual throughput (estimate $150-200/month for typical SaaS workloads)\n- **Service**: Kinesis Data Streams On-Demand mode\n- **Implementation**: Medium complexity - requires traffic analysis and gradual migration\n\n### 3. **Multi-AZ NAT Gateway + VPC Endpoints**\n**Impact: $400-600/month savings**\n- **Change**: Deploy NAT Gateways in each AZ + VPC endpoints for AWS services\n- **Current**: Single NAT Gateway creates cross-AZ charges ($0.01/GB) + potential availability risk\n- **Services**: NAT Gateway (3 instances) + VPC endpoints for S3, DynamoDB, etc.\n- **Savings**: Reduced data transfer costs + improved reliability\n- **Implementation**: Medium complexity\n\n### 4. **"
+    },
+    "llmlingua": {
+      "input_tokens": 2912,
+      "output_tokens": 512,
+      "compression_pct": 4.493276484093145,
+      "user_msg_compress_pct": 11.689419795221845,
+      "sonnet_cost": 0.016416,
+      "haiku_cost": 0.0004805,
+      "total_cost": 0.016896500000000002,
+      "net_saving_pct": -0.41302668330659126,
+      "output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows several opportunities for significant cost optimization. The current $47,000/month spend is heavily weighted toward compute and analytics services running at full capacity 24/7, despite clear usage patterns with off-peak periods and weekend lulls. The lack of any Reserved Instances or Savings Plans represents the largest immediate opportunity.\n\n## Top 3 Cost Optimization Recommendations\n\n### 1. **Implement Redshift Pause/Resume with Reserved Instance Strategy**\n**What to change:** Convert your 24/7 Redshift cluster to a pause/resume schedule and purchase Reserved Instances\n**AWS Services:** Amazon Redshift with EventBridge scheduling, Redshift Reserved Instances\n**Implementation:**\n- Schedule cluster to pause at 11pm EST and resume at 6am EST (7 hours daily savings)\n- Pause Friday 11pm through Monday 6am (additional 55 hours weekend savings)  \n- Purchase 1-year No Upfront Reserved Instances for remaining runtime\n- Total runtime: ~12 hours weekdays + minimal weekend = ~65 hours/week vs current 168 hours\n\n**Cost Impact:**\n- Current: 6 nodes × $3.26/hr × 730 hours = $14,276/month\n- Optimized: 6 nodes × $2.074/hr × 280 hours = $3,484/month\n- **Monthly Savings: $10,792 (76% reduction)**\n\n**Implementation Complexity:** Medium (requires scheduling automation and customer communication about maintenance windows)\n\n### 2. **Deploy Compute Savings Plans and Right-Size Fargate Tasks**\n**What to change:** Purchase 3-year Compute Savings Plans and optimize Fargate task sizing\n**AWS Services:** AWS Savings Plans, ECS Fargate with optimized task definitions\n**Implementation:**\n- Purchase $8,000/month 3-year All Upfront Compute Savings Plan (covers ~64% of compute spend)\n- Right-size main API service from 4 vCPU/8GB to 2 vCPU/4GB during off-peak (analysis shows 35% average CPU)\n- Reduce background worker tasks from 4 to 2 with better batching"
+    },
+    "llmlingua2": {
+      "input_tokens": 2580,
+      "output_tokens": 512,
+      "compression_pct": 15.38209248934077,
+      "user_msg_compress_pct": 40.01706484641638,
+      "sonnet_cost": 0.01542,
+      "haiku_cost": 0,
+      "total_cost": 0.01542,
+      "net_saving_pct": 8.361561775717608,
+      "output_text": "## Architecture Assessment\n\nYour B2B SaaS analytics platform shows solid technical foundations with Graviton adoption and appropriate service selection. However, significant cost optimization opportunities exist, particularly around compute commitments, storage lifecycle management, and right-sizing underutilized resources. The 24/7 Redshift cluster running at zero capacity for 7 hours daily represents the largest optimization opportunity.\n\n## Top 5 Cost Optimization Recommendations\n\n### 1. Implement Redshift Serverless for Analytics Workloads\n**Current State**: 6-node ra3.4xlarge cluster running 24/7 at $14,083/month ($9,800 reported + estimated RI pricing gap)\n**Recommendation**: Migrate to Redshift Serverless with scheduled scaling\n- Configure base capacity of 32 RPUs during business hours (6am-11pm EST)\n- Scale down to 8 RPUs during off-peak hours (11pm-6am EST)\n- Weekend scaling to 16 RPUs (85% of weekday peak traffic)\n**Expected Savings**: $6,200/month (44% reduction)\n**Implementation Complexity**: Medium\n**Services**: Amazon Redshift Serverless, AWS Lambda for scheduling\n\n### 2. Purchase 1-Year Reserved Instances and Compute Savings Plans\n**Current State**: All compute resources on On-Demand pricing\n**Recommendation**: \n- RDS db.r6g.2xlarge 1-yr No Upfront RI: $475.20/month vs current $748.80/month\n- ElastiCache r6g.xlarge (3 nodes) 1-yr RI: $1,041.84/month vs current $1,447.44/month\n- Compute Savings Plan for Fargate workloads: 17% savings on $3,000/month compute spend\n**Expected Savings**: $1,189/month (28% reduction on database and cache costs)\n**Implementation Complexity**: Low\n**Services**: AWS Cost Management Console\n\n### 3. Implement S3 Intelligent-Tiering and Lifecycle Policies\n**Current State**: 45TB in S3 Standard at $1,035/month\n**Recommendation**:\n- Enable S3 "
+    }
+  }
+}

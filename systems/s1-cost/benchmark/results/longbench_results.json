@@ -1,0 +1,873 @@
+{
+  "metadata": {
+    "model": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "max_tokens": 1024,
+    "temperature": 0,
+    "num_samples": 5,
+    "num_strategies": 10,
+    "dataset": "LongBench (multifieldqa_en + narrativeqa)",
+    "total_cost": 0.871517375,
+    "strategy_configs": {
+      "llmlingua2": {
+        "class": "OriginalLLMLingua2",
+        "call_kwargs": {}
+      },
+      "semantic_0.5": {
+        "class": "SemanticSummarizer",
+        "call_kwargs": {
+          "max_length_ratio": 0.5
+        }
+      },
+      "semantic_0.6": {
+        "class": "SemanticSummarizer",
+        "call_kwargs": {
+          "max_length_ratio": 0.6
+        }
+      },
+      "semantic_0.7": {
+        "class": "SemanticSummarizer",
+        "call_kwargs": {
+          "max_length_ratio": 0.7
+        }
+      },
+      "semantic_0.8": {
+        "class": "SemanticSummarizer",
+        "call_kwargs": {
+          "max_length_ratio": 0.8
+        }
+      },
+      "relevance_t0.7_c10": {
+        "class": "RelevanceFilter",
+        "call_kwargs": {
+          "max_chunks": 10
+        }
+      },
+      "relevance_t0.5_c20": {
+        "class": "RelevanceFilter",
+        "call_kwargs": {
+          "max_chunks": 20
+        }
+      },
+      "relevance_t0.3_c30": {
+        "class": "RelevanceFilter",
+        "call_kwargs": {
+          "max_chunks": 30
+        }
+      },
+      "relevance_t0.3_c50": {
+        "class": "RelevanceFilter",
+        "call_kwargs": {
+          "max_chunks": 50
+        }
+      },
+      "relevance_t0.3_c80": {
+        "class": "RelevanceFilter",
+        "call_kwargs": {
+          "max_chunks": 80
+        }
+      }
+    }
+  },
+  "samples": [
+    {
+      "dataset": "multifieldqa_en",
+      "index": 38,
+      "context_words": 1993,
+      "query": "What algorithm is engaged in the PLMS-PPIC method?",
+      "answers": [
+        "The normalized least mean square (NLMS) algorithm."
+      ],
+      "baseline": {
+        "input_tokens": 6814,
+        "output_tokens": 287,
+        "cost": 0.024747,
+        "f1": 0.08,
+        "judge": "YES",
+        "judge_cost": 4.6375e-05
+      },
+      "baseline_output": "According to the document, the **normalized least mean square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nMore specifically:\n\n1. **Multiple NLMS algorithms**: Unlike the LMS-PPIC method which uses only one NLMS algorithm, the PLMS-PPIC method uses \"a set of NLMS algorithms with different step-sizes.\"\n\n2. **Different step-sizes**: The method divides the step-size range into L subintervals and considers L individual step-sizes Θ = {μ₁, μ₂, ..., μₗ}.\n\n3. **Selection mechanism**: In each iteration, the algorithm chooses the parameter estimate from the NLMS algorithm whose weight element magnitudes best match unity (|w^s_m| = 1).\n\n4. **Parallel execution**: All L NLMS algorithms run in parallel, and the best one is selected based on the criterion that minimizes the sum of deviations from unity magnitude for all weight elements.\n\nThe document states that this approach allows the PLMS-PPIC method to \"keep the property that the magnitude of all weight elements in all stages are equal to unity\" more effectively than the single NLMS algorithm approach used in LMS-PPIC.",
+      "strategies": {
+        "llmlingua2": {
+          "input_tokens": 4657,
+          "output_tokens": 299,
+          "compression_pct": 31.65541532139713,
+          "sonnet_cost": 0.018456,
+          "haiku_cost": 0,
+          "total_cost": 0.018456,
+          "net_saving_pct": 25.421263183416176,
+          "rouge_l": 0.405,
+          "f1": 0.093,
+          "judge": "YES",
+          "judge_cost": 4.7875e-05,
+          "output": "Based on the document, the **NLMS (Normalized Least Mean Square) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the document explains that:\n\n1. **NLMS algorithm** is used as the core adaptive algorithm in the PLMS-PPIC method\n2. The method employs **multiple NLMS algorithms with different step-sizes** running in parallel\n3. The step-size range Ψ = (0, 1-√(M-1)/M) for the NLMS algorithm is divided into L subintervals\n4. L individual step-sizes are considered: Θ = {μ₁, μ₂, ..., μₗ}\n5. Each of the L NLMS algorithms is executed with its respective step-size μₗ\n\nThe document states: \"observations {r(n), X^s(n)}ₙ₌₁^N modified PLMS-PPIC NLMS algorithm compute\" the weight estimates.\n\nThe NLMS algorithm is chosen because it has the property that the magnitude of weight elements equals unity, which is essential for the PLMS-PPIC method's constraint that |w^s_m| = 1 for all users m = 1, 2, ..., M."
+        },
+        "semantic_0.5": {
+          "input_tokens": 1654,
+          "output_tokens": 348,
+          "compression_pct": 75.72644555327267,
+          "sonnet_cost": 0.010182,
+          "haiku_cost": 0.0018797500000000001,
+          "total_cost": 0.01206175,
+          "net_saving_pct": 51.259748656402806,
+          "rouge_l": 0.4079,
+          "f1": 0.0764,
+          "judge": "YES",
+          "judge_cost": 5.4000000000000005e-05,
+          "output": "Based on the paper, the **Normalized Least Mean Square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the PLMS-PPIC method uses **multiple NLMS algorithms with different step-sizes** to estimate the cancellation weights. Here are the key details:\n\n1. **Multiple NLMS algorithms**: The method employs L different NLMS algorithms, each with different step-sizes from the set Θ = {μ₁, μ₂, ..., μₗ}\n\n2. **Step-size range**: These step-sizes divide the stable range Ψ = (0, 1-√((M-1)/M)] into L subintervals\n\n3. **Selection mechanism**: At each iteration n of stage s, the algorithm selects the parameter estimate W_k^s(n) that minimizes the criterion:\n   ∑ᵢ₌₁ᴹ ||w_{m,l}^s(n)| - 1|\n\n4. **Weight constraint**: All weight elements are required to maintain unity magnitude (|w_m^s| = 1) across all stages\n\n5. **Adaptive selection**: All NLMS algorithms then adopt the best estimate as W^s(n) for that iteration\n\nThis approach differs from the standard LMS-PPIC method by using multiple parallel NLMS algorithms instead of a single LMS algorithm, which helps preserve the unity magnitude property of the cancellation weights while providing better convergence characteristics."
+        },
+        "semantic_0.6": {
+          "input_tokens": 1125,
+          "output_tokens": 294,
+          "compression_pct": 83.4898737892574,
+          "sonnet_cost": 0.007785,
+          "haiku_cost": 0.0015491250000000002,
+          "total_cost": 0.009334125,
+          "net_saving_pct": 62.28179173233119,
+          "rouge_l": 0.3134,
+          "f1": 0.0667,
+          "judge": "NO",
+          "judge_cost": 4.7249999999999997e-05,
+          "output": "Based on the document, the PLMS-PPIC method engages **multiple NLMS (Normalized Least Mean Square) algorithms**.\n\nSpecifically:\n\n1. **Multiple NLMS algorithms with different step-sizes** - The method runs L individual NLMS algorithms simultaneously at each stage, each with a different step-size parameter.\n\n2. **Selection mechanism** - Among these L NLMS algorithms, the one whose weight estimate magnitude sum Σ|w^s_m,l(n)|-1| is minimized is selected as the current parameter estimate.\n\n3. **Unit magnitude constraint** - All NLMS algorithms maintain the property that weight vectors have unit magnitude across all stages, which is a key characteristic that distinguishes PLMS-PPIC from its predecessor LMS-PPIC.\n\nThe document mentions that in the simulations, multiple step-sizes were used: {0.01, 0.05, ..., 1}(1-√((M-1)/M)), indicating that several NLMS algorithms with this range of step-sizes operate in parallel, with the best-performing one being selected at each iteration.\n\nThis multi-algorithm approach allows PLMS-PPIC to adaptively choose the most appropriate step-size for the current conditions while maintaining the desired unit magnitude property of the cancelation weights."
+        },
+        "semantic_0.7": {
+          "input_tokens": 1459,
+          "output_tokens": 303,
+          "compression_pct": 78.58820076313472,
+          "sonnet_cost": 0.008922,
+          "haiku_cost": 0.001757875,
+          "total_cost": 0.010679875,
+          "net_saving_pct": 56.84375883945529,
+          "rouge_l": 0.3436,
+          "f1": 0.0845,
+          "judge": "YES",
+          "judge_cost": 4.8375e-05,
+          "output": "Based on the document, the PLMS-PPIC (Parallel Least Mean Square-Partial Parallel Interference Cancelation) method engages **multiple NLMS (Normalized Least Mean Square) algorithms**.\n\nSpecifically:\n\n1. **Multiple NLMS algorithms with different step-sizes**: The method uses L NLMS algorithms, each with different step-sizes from the set Θ = {μ₁, μ₂, ..., μₗ}.\n\n2. **Selection mechanism**: At each iteration n in stage s, the algorithm selects the NLMS algorithm that minimizes the criterion: ∑ᴹₘ₌₁||wₘ,ₗˢ(n)| - 1|, meaning it chooses the algorithm whose cancelation weight estimates best match unity magnitude.\n\n3. **Adaptive structure**: Unlike the predecessor LMS-PPIC which uses a single NLMS algorithm, PLMS-PPIC employs this parallel structure of multiple NLMS algorithms to better preserve the unity magnitude property of weight vector elements across all stages and iterations.\n\nThe document also mentions that when L=1 (using only one NLMS algorithm), the method becomes equivalent to the modified LMS-PPIC, confirming that NLMS is the core algorithmic component in both approaches."
+        },
+        "semantic_0.8": {
+          "input_tokens": 1794,
+          "output_tokens": 264,
+          "compression_pct": 73.67185206926915,
+          "sonnet_cost": 0.009342,
+          "haiku_cost": 0.001966625,
+          "total_cost": 0.011308625,
+          "net_saving_pct": 54.30304683395968,
+          "rouge_l": 0.3498,
+          "f1": 0.1043,
+          "judge": "YES",
+          "judge_cost": 4.35e-05,
+          "output": "Based on the text, the PLMS-PPIC method engages the **Normalized Least Mean Square (NLMS) algorithm**.\n\nSpecifically:\n\n1. **Multiple NLMS algorithms** are used simultaneously, each with different step-sizes (μ₁, μ₂, ..., μₗ)\n\n2. The step-sizes are constrained to the range **(0, 1-√((M-1)/M)]**\n\n3. At each iteration n in stage s, the algorithm **selects** the NLMS algorithm whose weight magnitudes best satisfy the condition: **Σₘ₌₁ᴹ ||wᵐˢₗ(n)|-1| = 0**\n\n4. This selection process allows the method to choose the NLMS algorithm that keeps the weight magnitudes closest to unity at each iteration\n\nThe key innovation of PLMS-PPIC over its predecessor LMS-PPIC is that it uses **multiple parallel NLMS algorithms** with different step-sizes and dynamically selects the best-performing one, rather than using a single NLMS algorithm with a fixed step-size."
+        },
+        "relevance_t0.7_c10": {
+          "input_tokens": 694,
+          "output_tokens": 231,
+          "compression_pct": 89.81508658643969,
+          "sonnet_cost": 0.005547,
+          "haiku_cost": 0,
+          "total_cost": 0.005547,
+          "net_saving_pct": 77.58516183779852,
+          "rouge_l": 0.3679,
+          "f1": 0.1212,
+          "judge": "YES",
+          "judge_cost": 3.9374999999999995e-05,
+          "output": "According to the text, the **normalized least mean square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the text states:\n\n\"In both of these methods, the normalized least mean square (NLMS) algorithm is engaged.\"\n\nMore precisely, the PLMS-PPIC method uses **a set of NLMS algorithms with different step-sizes** rather than just one NLMS algorithm. As mentioned in the passage:\n\n\"Unlike the LMS-PPIC, the PLMS-PPIC method tries to keep this property in each iteration by using a set of NLMS algorithms with different step-sizes instead of one NLMS algorithm used in LMS-PPIC.\"\n\nThe set of step-sizes for these parallel NLMS algorithms is given as:\n$$\\Theta=\\{0.01,0.05,0.1,0.2,\\cdots,1\\}(1-\\sqrt{\\frac{M-1}{M}})$$"
+        },
+        "relevance_t0.5_c20": {
+          "input_tokens": 1268,
+          "output_tokens": 295,
+          "compression_pct": 81.39125330202525,
+          "sonnet_cost": 0.008229,
+          "haiku_cost": 0,
+          "total_cost": 0.008229,
+          "net_saving_pct": 66.74748454358104,
+          "rouge_l": 0.3452,
+          "f1": 0.093,
+          "judge": "YES",
+          "judge_cost": 4.7375e-05,
+          "output": "Based on the text provided, the **Normalized Least Mean Square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the text states:\n\n1. \"In both of these methods, the normalized least mean square (NLMS) algorithm is engaged\"\n\n2. \"a set of NLMS adaptive algorithm are used to compute\" the weight estimates\n\n3. \"In each stage, $L$ individual NLMS algorithms are executed ($\\mu_l$ is the step-size of the $l^{th}$ algorithm)\"\n\nThe key distinction is that unlike the LMS-PPIC method which uses a single NLMS algorithm, the PLMS-PPIC method uses **multiple parallel NLMS algorithms with different step-sizes**. The set of step-sizes is given as:\n\n$$\\Theta=\\{0.01,0.05,0.1,0.2,\\cdots,1\\}(1-\\sqrt{\\frac{M-1}{M}})$$\n\nThis parallel structure with multiple NLMS algorithms running simultaneously with different step-sizes is what gives the PLMS-PPIC (Parallel Least Mean Square - Partial Parallel Interference Cancellation) method its name and enhanced performance compared to the single-algorithm approach."
+        },
+        "relevance_t0.3_c30": {
+          "input_tokens": 1787,
+          "output_tokens": 239,
+          "compression_pct": 73.77458174346933,
+          "sonnet_cost": 0.008945999999999999,
+          "haiku_cost": 0,
+          "total_cost": 0.008945999999999999,
+          "net_saving_pct": 63.850163656200756,
+          "rouge_l": 0.3679,
+          "f1": 0.125,
+          "judge": "YES",
+          "judge_cost": 4.0375e-05,
+          "output": "According to the text, the **normalized least mean square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the text states:\n\n\"In both of these methods, the normalized least mean square (NLMS) algorithm is engaged.\"\n\nThe PLMS-PPIC method uses **a set of parallel NLMS algorithms** with different step-sizes, unlike the LMS-PPIC which uses only one NLMS algorithm. The text mentions that \"a set of NLMS adaptive algorithm are used\" and that \"In each stage, $L$ individual NLMS algorithms are executed ($\\mu_l$ is the step-size of the $l^{th}$ algorithm).\"\n\nThe step-sizes for these parallel NLMS algorithms in the modified PLMS-PPIC method are given as:\n$$\\Theta=\\{0.01,0.05,0.1,0.2,\\cdots,1\\}(1-\\sqrt{\\frac{M-1}{M}})$$"
+        },
+        "relevance_t0.3_c50": {
+          "input_tokens": 3406,
+          "output_tokens": 362,
+          "compression_pct": 50.01467566774288,
+          "sonnet_cost": 0.015648000000000002,
+          "haiku_cost": 0,
+          "total_cost": 0.015648000000000002,
+          "net_saving_pct": 36.7680931021942,
+          "rouge_l": 0.4302,
+          "f1": 0.0882,
+          "judge": "YES",
+          "judge_cost": 5.575e-05,
+          "output": "Based on the text, the **Normalized Least Mean Square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the text states:\n\n\"In both of these methods, the normalized least mean square (NLMS) algorithm is engaged.\"\n\nMore details about how NLMS is used in PLMS-PPIC:\n\n1. **Multiple parallel NLMS algorithms**: Unlike LMS-PPIC which uses only one NLMS algorithm, the PLMS-PPIC method uses a set of parallel NLMS algorithms with different step-sizes.\n\n2. **Step-size set**: The set of step-sizes for the parallel NLMS algorithms is given as:\n   $$\\Theta=\\{0.01,0.05,0.1,0.2,\\cdots,1\\}(1-\\sqrt{\\frac{M-1}{M}})$$\n\n3. **Algorithm selection**: In each iteration, the parameter estimate of the NLMS algorithm is chosen whose element magnitudes of cancelation weight estimate have the best match with unity.\n\n4. **Update equation**: Each NLMS algorithm updates according to:\n   $$W^{s}_l(n)=W^{s}(n-1)+\\mu_l \\frac{X^s(n)}{\\|X^s(n)\\|^2}e(n)$$\n   \n   where $\\mu_l$ is the step-size of the $l^{th}$ algorithm and $L$ individual NLMS algorithms are executed in each stage."
+        },
+        "relevance_t0.3_c80": {
+          "input_tokens": 5837,
+          "output_tokens": 300,
+          "compression_pct": 14.338127384796007,
+          "sonnet_cost": 0.022011,
+          "haiku_cost": 0,
+          "total_cost": 0.022011,
+          "net_saving_pct": 11.055885561886297,
+          "rouge_l": 0.3432,
+          "f1": 0.0857,
+          "judge": "YES",
+          "judge_cost": 4.8e-05,
+          "output": "Based on the text, the **Normalized Least Mean Square (NLMS) algorithm** is engaged in the PLMS-PPIC method.\n\nSpecifically, the text states:\n\n\"In both of these methods, the normalized least mean square (NLMS) algorithm is engaged.\"\n\nMore precisely, the PLMS-PPIC method uses **multiple parallel NLMS algorithms** with different step-sizes, as explained in the passage:\n\n\"Unlike the LMS-PPIC, the PLMS-PPIC method tries to keep this property in each iteration by using a set of NLMS algorithms with different step-sizes instead of one NLMS algorithm used in LMS-PPIC.\"\n\nThe method employs:\n- A set of L individual NLMS algorithms executed in parallel in each stage\n- Each algorithm has its own step-size μₗ (where l = 1, 2, ..., L)\n- The step-sizes are from the set Θ = {0.01, 0.05, 0.1, 0.2, ..., 1}(1-√((M-1)/M))\n\nSo while the core algorithm is NLMS, the PLMS-PPIC method's key innovation is using multiple parallel NLMS algorithms simultaneously with different step-sizes to improve performance."
+        }
+      }
+    },
+    {
+      "dataset": "multifieldqa_en",
+      "index": 5,
+      "context_words": 4989,
+      "query": "What is the effect of the proximity of superconductivity on the Kondo effect?",
+      "answers": [
+        "It tends to suppress the Kondo effect."
+      ],
+      "baseline": {
+        "input_tokens": 12715,
+        "output_tokens": 611,
+        "cost": 0.04731,
+        "f1": 0.0334,
+        "judge": "NO",
+        "judge_cost": 7.9e-05
+      },
+      "baseline_output": "Based on this paper, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## General Effects of Superconducting Proximity\n\n1. **Suppression of conventional Kondo effect**: When the superconducting energy gap 2Δ becomes larger than the Kondo temperature T_K, superconductivity tends to suppress the traditional Kondo effect due to the induced pairing in quantum dots.\n\n2. **Enhancement in asymmetric setups**: For quantum dots attached to both superconducting and normal contacts, superconducting proximity can actually enhance the Kondo effect in sub-gap transport regimes.\n\n## Novel CAR Exchange Mechanism\n\nThe most significant finding is that superconducting proximity introduces a new exchange mechanism - **Crossed Andreev Reflection (CAR) exchange** - which can actually induce Kondo screening:\n\n### How CAR Exchange Works:\n- Cooper pairs from the superconductor can be absorbed and re-emitted by quantum dots in inter-dot singlet states\n- This process lowers the energy of singlet states relative to triplet states\n- The mechanism generates an effective antiferromagnetic exchange interaction between quantum dots\n- The exchange strength scales as Γ_S²/(U + U'), where Γ_S is the coupling to the superconductor\n\n### Key Consequences:\n\n1. **CAR-induced Kondo screening**: Even without direct hopping between quantum dots (t = 0), the CAR exchange alone can cause two-stage Kondo screening with a characteristic temperature:\n   ```\n   T* = a T_K exp(-b T_K / J_eff)\n   ```\n\n2. **Residual conductance**: At particle-hole symmetry, this leads to a finite residual conductance at T = 0:\n   ```\n   G_min ≈ (e²/h) × 2.25 × (Γ_S/U)²\n   ```\n\n3. **Competition with RKKY**: CAR exchange competes with conventional RKKY interactions, potentially leading to different magnetic ground states (singlet vs. triplet) depending on their relative strengths.\n\n## Experimental Signatures\n\nThe paper identifies several experimental fingerprints:\n- Non-zero conductance at T = 0 in particle-hole symmetric conditions\n- Specific temperature dependence of conductance showing two-stage Kondo behavior\n- Dependence of residual conductance on superconducting coupling strength\n\nThis represents a paradigm shift where superconductivity, rather than just competing with magnetic correlations, can actually **induce** magnetic ordering through the formation of Kondo singlets via the CAR exchange mechanism.",
+      "strategies": {
+        "llmlingua2": {
+          "input_tokens": 7928,
+          "output_tokens": 578,
+          "compression_pct": 37.6484467164766,
+          "sonnet_cost": 0.032454,
+          "haiku_cost": 0,
+          "total_cost": 0.032454,
+          "net_saving_pct": 31.40139505389981,
+          "rouge_l": 0.3666,
+          "f1": 0.0235,
+          "judge": "NO",
+          "judge_cost": 8.1125e-05,
+          "output": "Based on this research paper, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Suppression vs Enhancement Effects\n\n**Suppression occurs when:**\n- The superconducting energy gap (Δ) is larger than the Kondo temperature (T_K)\n- Strong superconducting pairing dominates over magnetic correlations\n- This leads to reduced Kondo screening at low temperatures\n\n**Enhancement can occur through:**\n- Crossed Andreev Reflection (CAR) exchange mechanisms\n- Non-local pairing processes that create effective antiferromagnetic coupling between quantum dots\n\n## Key Mechanisms\n\n### 1. **CAR Exchange**\n- Cooper pairs from the superconductor can split, with electrons tunneling into different quantum dots\n- This creates an effective antiferromagnetic exchange interaction\n- The CAR exchange strength is proportional to Γ_S²/U, where Γ_S is the coupling to the superconductor and U is the Coulomb interaction\n\n### 2. **Modified Energy Scales**\nThe effective exchange coupling becomes:\n```\nJ_eff ≈ J + 4t²/(U-U') + 4Γ_S²/(U+U'+3J/4)\n```\nwhere the last term represents the CAR contribution.\n\n### 3. **Two-Stage Kondo Effect**\nIn double quantum dot systems, superconducting proximity can lead to a modified two-stage Kondo screening with a characteristic temperature:\n```\nT* = T_K exp(-T_K/J_eff)\n```\n\n## Experimental Signatures\n\n**Residual Conductance:**\n- At T=0, finite conductance persists: G_min ∝ Γ_S²/U²\n- This contrasts with conventional systems where G→0 in the two-stage regime\n\n**Temperature Dependence:**\n- Modified conductance vs temperature curves\n- Plateau formation in conductance at intermediate temperatures\n- Competition between superconducting pairing and magnetic screening\n\n## Competing Effects\n\nThe paper identifies competition between:\n- **CAR exchange** (antiferromagnetic, promotes Kondo screening)\n- **RKKY interaction** (can be ferro- or antiferromagnetic)\n- **Direct superconducting pairing** (suppresses magnetic correlations)\n\nThe relative strength of these mechanisms determines whether superconducting proximity enhances or suppresses the Kondo effect, making this a rich area for both fundamental physics and potential quantum device applications."
+        },
+        "semantic_0.5": {
+          "input_tokens": 2611,
+          "output_tokens": 666,
+          "compression_pct": 79.4651985843492,
+          "sonnet_cost": 0.017823000000000002,
+          "haiku_cost": 0.0032125,
+          "total_cost": 0.021035500000000002,
+          "net_saving_pct": 55.53688437962375,
+          "rouge_l": 0.3403,
+          "f1": 0.0228,
+          "judge": "NO",
+          "judge_cost": 7.4125e-05,
+          "output": "Based on this research, the proximity of superconductivity has several complex and sometimes counterintuitive effects on the Kondo effect:\n\n## Primary Effects of Superconducting Proximity\n\n### 1. **Conventional Suppression**\n- When the superconducting gap **2Δ exceeds the Kondo temperature T_K**, superconducting proximity typically **suppresses the Kondo effect**\n- This occurs because the SC gap opens up around the Fermi level, disrupting the low-energy processes that drive Kondo screening\n\n### 2. **Novel Enhancement via CAR Exchange**\nThe key finding is that superconductivity can actually **enable new Kondo physics** through crossed Andreev reflection (CAR) exchange:\n\n- **CAR exchange alone can cause Kondo screening** in systems where it wouldn't otherwise occur\n- This happens even with **weak SC coupling** (Γ_S ≪ U), unlike previous studies requiring strong coupling\n- The mechanism works by creating effective antiferromagnetic coupling between quantum dots through Cooper pair splitting\n\n## Specific Manifestations\n\n### **Two-Stage Kondo Effect**\n- SC proximity can induce a **second stage of Kondo screening** at lower temperatures\n- The second-stage Kondo temperature is: T* = aT_K exp(-bT_K/J^eff)\n- This occurs when CAR exchange becomes the dominant inter-dot coupling mechanism\n\n### **Residual Conductance Signature**\nA distinctive experimental signature emerges:\n- At T→0, conductance saturates at a **residual minimum value** rather than reaching the usual maximum\n- This residual conductance scales as: G_min ∝ Γ_S²/U²\n- This provides a clear experimental fingerprint of SC-induced effects\n\n### **Competition with Other Exchange Mechanisms**\nSC proximity introduces CAR exchange that competes with:\n- **RKKY exchange**: Can lead to quantum phase transitions between different magnetic ground states\n- **Direct exchange**: Effects approximately balance, maintaining screening temperature while reducing conductance\n- **Ferromagnetic vs antiferromagnetic**: Different outcomes depending on the sign of effective exchange\n\n## Physical Mechanism\n\nThe underlying physics involves:\n1. **Cooper pair splitting**: Each electron of a Cooper pair tunnels into different quantum dots\n2. **Non-local pairing**: Creates effective spin-spin interactions between spatially separated magnetic moments  \n3. **Entanglement**: The split Cooper pair electrons remain entangled, mediating magnetic correlations\n\n## Key Insight\n\nRather than simply suppressing magnetism, **superconductivity can actually facilitate magnetic order formation** through the creation of Kondo singlets via CAR exchange. This represents a fundamental shift from viewing superconductivity and magnetism as purely competing phenomena to recognizing how they can cooperatively produce new quantum many-body states.\n\nThis has important implications for hybrid quantum devices and materials that combine superconducting and magnetic properties."
+        },
+        "semantic_0.6": {
+          "input_tokens": 2437,
+          "output_tokens": 607,
+          "compression_pct": 80.8336610302792,
+          "sonnet_cost": 0.016416,
+          "haiku_cost": 0.0031037499999999997,
+          "total_cost": 0.01951975,
+          "net_saving_pct": 58.740752483618685,
+          "rouge_l": 0.319,
+          "f1": 0.0275,
+          "judge": "NO",
+          "judge_cost": 7.787500000000001e-05,
+          "output": "Based on this paper, the proximity of superconductivity has several complex and sometimes counterintuitive effects on the Kondo effect:\n\n## Traditional Suppression vs. Enhancement\n\n**Conventional expectation**: Superconducting proximity typically suppresses the Kondo effect when the superconducting gap exceeds the Kondo temperature, as pairing competes with magnetic screening.\n\n**Novel enhancement mechanism**: However, this paper demonstrates that superconducting proximity can actually **enhance** magnetic ordering through a new mechanism - crossed Andreev reflection (CAR) exchange.\n\n## Key Effects of SC Proximity\n\n### 1. **CAR-Induced Kondo Screening**\n- **Main discovery**: Non-local pairing from SC proximity generates CAR exchange that becomes the sole Kondo screening mechanism\n- This occurs even at modest couplings (Γ_S ≪ U), unlike previous systems requiring Γ_S ~ U/2\n- CAR exchange acts antiferromagnetically, promoting singlet formation between quantum dots\n\n### 2. **Two-Stage Kondo Process**\n- SC proximity enables a two-stage Kondo screening where:\n  - First stage: Normal Kondo effect at temperature T_K\n  - Second stage: CAR-mediated screening at lower temperature T*\n- The second stage temperature follows: T* = aT_K exp(-bT_K/J_eff)\n\n### 3. **Residual Conductance**\n- SC proximity produces a characteristic residual conductance at T→0:\n  - G_min = (e²/h) · c(Γ_S²/U²), with c ≈ 2.25\n- This weak Γ_S² dependence is a hallmark of superconducting proximity effects\n\n### 4. **Competition with RKKY Interactions**\nSC proximity also induces conventional RKKY interactions that can:\n- **Antiferromagnetic RKKY**: Form molecular singlets, suppressing conductance\n- **Ferromagnetic RKKY**: Compete with CAR exchange, potentially leading to underscreened Kondo states\n\n## Physical Mechanism\n\nThe CAR exchange arises because a double quantum dot in a singlet state can absorb and re-emit Cooper pairs (impossible for triplet states due to spin conservation), effectively lowering the singlet energy and increasing the singlet-triplet splitting.\n\n## Experimental Implications\n\nThis work suggests that in hybrid quantum devices, superconducting proximity doesn't simply suppress magnetic correlations but can create entirely new pathways for magnetic screening, opening possibilities for novel quantum devices that exploit both superconducting and magnetic quantum phenomena simultaneously."
+        },
+        "semantic_0.7": {
+          "input_tokens": 4403,
+          "output_tokens": 695,
+          "compression_pct": 65.37160833661031,
+          "sonnet_cost": 0.023633999999999995,
+          "haiku_cost": 0.0043325,
+          "total_cost": 0.027966499999999995,
+          "net_saving_pct": 40.886704713591214,
+          "rouge_l": 0.3965,
+          "f1": 0.0304,
+          "judge": "NO",
+          "judge_cost": 8.125e-05,
+          "output": "Based on this research, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Primary Effects of Superconducting Proximity\n\n### 1. **Suppression of Traditional Kondo Effect**\n- When the superconducting gap (2Δ) exceeds the Kondo temperature (T_K), superconducting proximity generally suppresses the conventional Kondo effect\n- This occurs because SC pairing competes with the magnetic correlations that drive Kondo physics\n\n### 2. **Introduction of CAR Exchange Mechanism**\n- **Novel Finding**: Superconducting proximity introduces a new exchange interaction through Crossed Andreev Reflections (CAR)\n- This CAR exchange can actually **generate** Kondo screening even when direct exchange mechanisms are absent\n- The mechanism works through Cooper pair absorption and re-emission, which lowers the energy of singlet states relative to triplet states\n\n### 3. **Two-Stage Kondo Screening**\n- SC proximity can induce a two-stage Kondo process:\n  - First stage: conventional Kondo effect at temperature T_K\n  - Second stage: CAR-mediated screening at lower temperature T*\n- The second-stage temperature follows: T* = a T_K exp(-b T_K / J^eff)\n\n## Key Experimental Signatures\n\n### 4. **Residual Conductance at Low Temperature**\n- At particle-hole symmetry, CAR exchange produces a characteristic residual conductance:\n  - G_min = (e²/h) · c Γ_S²/U²  (where c ≈ 2.25)\n- This residual conductance serves as a \"hallmark\" of superconducting proximity effects\n\n### 5. **Competition with RKKY Interactions**\n- SC proximity introduces both CAR exchange (antiferromagnetic) and conventional RKKY interactions\n- When RKKY is ferromagnetic, it competes with CAR exchange, leading to rich phase behavior including:\n  - Singlet ground states (two-stage Kondo)\n  - Effective decoupling scenarios\n  - Underscreened Kondo effects\n\n## Broader Implications\n\n### 6. **Counterintuitive Result**\n- **Main Discovery**: Superconductivity can actually *enhance* magnetic ordering through the CAR mechanism\n- This occurs even with relatively weak SC coupling (Γ_S ≪ U), contrasting previous work that required stronger coupling\n\n### 7. **Robustness and Limitations**\n- The effects are robust to moderate asymmetries in coupling strengths\n- However, strong asymmetries or reduced CAR efficiency can suppress the phenomena\n- Fine-tuning near particle-hole symmetry may be required for clear experimental observation\n\nIn summary, superconducting proximity creates a complex interplay of competing effects: while it can suppress traditional Kondo physics, it simultaneously introduces new CAR-mediated exchange mechanisms that can generate novel forms of Kondo screening with distinctive experimental signatures."
+        },
+        "semantic_0.8": {
+          "input_tokens": 2573,
+          "output_tokens": 556,
+          "compression_pct": 79.76405819897758,
+          "sonnet_cost": 0.016059,
+          "haiku_cost": 0.0031887499999999997,
+          "total_cost": 0.01924775,
+          "net_saving_pct": 59.3156837877827,
+          "rouge_l": 0.3779,
+          "f1": 0.0234,
+          "judge": "NO",
+          "judge_cost": 8.025e-05,
+          "output": "Based on the text, superconductivity proximity has several complex effects on the Kondo effect, depending on the specific system configuration and energy scales involved:\n\n## General Suppression Effects\n\n**Traditional suppression**: When the superconducting gap exceeds the Kondo temperature (2Δ > T_K), superconductivity typically suppresses the Kondo effect by inducing pairing in the quantum dots.\n\n**Cooper pair splitter suppression**: In Cooper pair splitter geometries, superconductivity suppresses both SU(2) and SU(4) Kondo effects.\n\n## Enhancement and Novel Screening Mechanisms\n\n**Enhanced Kondo effect**: For quantum dots attached to both superconducting and normal contacts, superconductivity can actually enhance the Kondo effect.\n\n**CAR-induced screening**: The key finding is that **non-local pairing alone can cause Kondo screening** through crossed Andreev reflections (CAR). This requires only small superconducting coupling (Γ_S ≪ U), unlike previous work that needed Γ_S ~ U/2.\n\n## Two-Stage Kondo Screening\n\nSuperconductivity introduces **CAR exchange interactions** that can produce two-stage Kondo screening characterized by:\n\n- A second Kondo temperature: T* = a T_K exp(-b T_K/J_eff)\n- **Residual conductance** at zero temperature even at particle-hole symmetry: G_min = (e²/h) · c · (Γ_S²/U²)\n\nThis residual conductance is a hallmark signature of superconducting proximity effects.\n\n## Competition with RKKY Interactions\n\nSuperconductivity also introduces RKKY exchange (J ~ Γ_S²) that competes with CAR exchange:\n\n- **Antiferromagnetic RKKY** enhances the effective exchange and increases T*\n- **Ferromagnetic RKKY** competes with CAR exchange, potentially leading to underscreened Kondo effects\n\n## Practical Implications\n\nThe effects are robust to:\n- Small deviations from particle-hole symmetry\n- Coupling asymmetries between quantum dots\n- Reduced CAR efficiency (within realistic experimental parameters)\n\nThis makes the superconductivity-induced Kondo phenomena experimentally observable with current techniques, providing new ways to control and manipulate magnetic screening in hybrid quantum devices."
+        },
+        "relevance_t0.7_c10": {
+          "input_tokens": 638,
+          "output_tokens": 413,
+          "compression_pct": 94.98230436492332,
+          "sonnet_cost": 0.008109,
+          "haiku_cost": 0,
+          "total_cost": 0.008109,
+          "net_saving_pct": 82.85986049461003,
+          "rouge_l": 0.3287,
+          "f1": 0.055,
+          "judge": "NO",
+          "judge_cost": 6.237500000000001e-05,
+          "output": "Based on the text, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Primary Effects:\n\n1. **Suppression of the conventional Kondo effect**: When the superconducting energy gap (2Δ) becomes larger than the relevant Kondo temperature (T_K), the proximity to the superconductor tends to suppress the traditional Kondo effect.\n\n2. **Induction of pairing in quantum dots**: The superconducting proximity effect induces pairing correlations in the quantum dots, which competes with the Kondo screening mechanism.\n\n## Novel Mechanisms:\n\n3. **CAR (Crossed Andreev Reflection) exchange**: The proximity effect enables a new type of exchange mechanism through CAR processes, which can actually **cause** Kondo screening rather than just suppress it. This is a key finding of the research.\n\n4. **Two-stage Kondo effect via CAR**: When direct tunneling is absent (t=0) but superconducting coupling is present (G_S > 0), a two-stage Kondo effect can occur solely through the CAR exchange mechanism.\n\n## Coupling Strength Requirements:\n\n5. **Small coupling sufficient**: Relatively small values of coupling to the superconductor (G_S ≪ U) are sufficient for these effects to manifest.\n\n## Transition in behavior:\n\n6. **From conventional to exotic**: For weak G_S, the system shows conventional single-stage Kondo effect with maximum conductance ~2e²/h, but as superconducting coupling increases, more exotic two-stage behavior emerges through the CAR mechanism.\n\nThe key insight is that superconducting proximity doesn't just suppress Kondo physics - it can actually enable entirely new pathways for Kondo screening through non-local pairing correlations."
+        },
+        "relevance_t0.5_c20": {
+          "input_tokens": 1277,
+          "output_tokens": 512,
+          "compression_pct": 89.9567440031459,
+          "sonnet_cost": 0.011511,
+          "haiku_cost": 0,
+          "total_cost": 0.011511,
+          "net_saving_pct": 75.66899175649968,
+          "rouge_l": 0.2291,
+          "f1": 0.0391,
+          "judge": "NO",
+          "judge_cost": 7.475e-05,
+          "output": "Based on the text, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Main Effects:\n\n### 1. **CAR-Exchange-Mediated Kondo Screening**\n- The **primary finding** is that non-local pairing induced by superconducting proximity effect can create **Crossed Andreev Reflection (CAR) exchange**, which alone can cause Kondo screening\n- This represents a novel mechanism where superconductivity actually **promotes** magnetic order (Kondo singlet formation), contrary to intuitive expectations\n\n### 2. **Two-Stage Kondo Effect**\n- For systems with superconducting coupling (Γₛ > 0), a **two-stage Kondo effect** emerges that is caused solely by CAR exchange\n- This is distinct from the conventional two-stage effect caused by direct exchange mechanisms\n\n### 3. **Competition vs. Enhancement Effects**\nThe proximity effect can either suppress or enhance the Kondo effect depending on conditions:\n\n**Suppression occurs when:**\n- The superconducting energy gap becomes larger than the Kondo temperature (2Δ > Tₖ)\n- Pairing competes with magnetic ordering\n- Relatively small SC coupling (Γₛ ≪ U) is sufficient for suppression\n\n**Enhancement occurs when:**\n- For quantum dots attached to both SC and normal contacts\n- CAR exchange mechanism dominates\n\n### 4. **Modification of Transport Properties**\n- At particle-hole symmetry (PHS): G_min = G(T=0) = 0 without SC, but **G_min > 0 with SC** - this serves as a hallmark of SC-induced two-stage Kondo effect\n- The conductance behavior and spectral properties are significantly altered\n\n### 5. **Energy Scale Effects**\n- Even relatively weak SC coupling can dramatically affect the Kondo physics in sub-gap transport\n- The interplay between superconducting gap Δ and Kondo temperature Tₖ determines which effect dominates\n\nThe key insight is that superconductivity doesn't simply compete with the Kondo effect - it can create entirely new exchange mechanisms (CAR exchange) that generate novel forms of Kondo screening."
+        },
+        "relevance_t0.3_c30": {
+          "input_tokens": 1836,
+          "output_tokens": 507,
+          "compression_pct": 85.56036177742823,
+          "sonnet_cost": 0.013113,
+          "haiku_cost": 0,
+          "total_cost": 0.013113,
+          "net_saving_pct": 72.28281547241599,
+          "rouge_l": 0.3059,
+          "f1": 0.0412,
+          "judge": "NO",
+          "judge_cost": 7.400000000000001e-05,
+          "output": "Based on this text, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Main Effects of Superconducting Proximity:\n\n### 1. **CAR Exchange-Induced Kondo Screening**\n- The **main finding** is that non-local pairing from superconducting proximity effect can induce CAR (Crossed Andreev Reflection) exchange, which **alone can cause Kondo screening**\n- This creates a novel mechanism where superconductivity actually **promotes** magnetic order (Kondo singlet formation), contrary to intuitive expectations\n\n### 2. **Two-Stage Kondo Effect**\n- For sufficient superconducting coupling (Γ_S > 0), a **two-stage Kondo effect** emerges caused solely by CAR exchange\n- This occurs even when direct tunneling between quantum dots is absent (t = 0)\n- The system exhibits a characteristic temperature T* below which the second stage of Kondo screening occurs\n\n### 3. **Competition with Traditional Kondo Physics**\n- **Suppression**: When the superconducting gap 2Δ becomes larger than the Kondo temperature T_K, superconductivity tends to suppress the conventional Kondo effect\n- **Enhancement**: For quantum dots attached to both superconducting and normal contacts, superconductivity can enhance the Kondo effect in sub-gap transport\n\n### 4. **Modification of Transport Properties**\n- At particle-hole symmetry, G_min = G(T=0) = 0 without superconducting leads\n- With superconducting proximity, **G_min > 0 becomes a hallmark** of the SC-induced two-stage Kondo effect\n- The conductance behavior changes from conventional single-stage to two-stage screening\n\n### 5. **New Exchange Mechanisms**\nThe proximity introduces additional exchange interactions beyond the conventional local exchange:\n- **CAR exchange** (the focus of this work)\n- **RKKY-like interactions** that can compete with Kondo physics\n\nThe key insight is that superconducting proximity doesn't just compete with magnetism—it can actually create new pathways for magnetic screening through CAR-mediated exchange interactions."
+        },
+        "relevance_t0.3_c50": {
+          "input_tokens": 3156,
+          "output_tokens": 654,
+          "compression_pct": 75.17892253244199,
+          "sonnet_cost": 0.019278,
+          "haiku_cost": 0,
+          "total_cost": 0.019278,
+          "net_saving_pct": 59.25174381737476,
+          "rouge_l": 0.3137,
+          "f1": 0.0235,
+          "judge": "NO",
+          "judge_cost": 7.887499999999999e-05,
+          "output": "Based on this research paper, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Main Effects of Superconducting Proximity on Kondo Effect:\n\n### 1. **CAR-Induced Kondo Screening (Novel Mechanism)**\n- **Key Discovery**: The paper's main finding is that non-local pairing induced by superconducting proximity effect can be the **sole cause** of Kondo screening through crossed Andreev reflection (CAR) exchange\n- This represents a completely new mechanism for Kondo effect that doesn't require direct exchange interactions\n- CAR exchange can lead to two-stage Kondo screening even when direct exchange mechanisms are absent (t=0)\n\n### 2. **Competition vs. Enhancement Effects**\nThe proximity effect can either suppress or enhance the Kondo effect depending on energy scales:\n\n**Suppression occurs when:**\n- The superconducting energy gap 2Δ becomes larger than the Kondo temperature T_K\n- This happens because pairing competes with magnetic correlations\n- Relatively small SC coupling (G_S << U) is sufficient for this effect\n\n**Enhancement occurs when:**\n- For quantum dots attached to both SC and normal contacts\n- Can enhance the Kondo effect in sub-gap transport regime\n- Leads to formation of Kondo singlet states\n\n### 3. **Two-Stage Kondo Screening**\n- The proximity effect enables a **two-stage Kondo process**:\n  1. First stage: Conventional Kondo screening at temperature T_K\n  2. Second stage: Additional screening at lower temperature T* due to CAR exchange\n- The second-stage temperature follows: T* = aT_K exp(-bT_K/J_eff)\n\n### 4. **Hallmark Signatures**\n- **Residual conductance**: G_min > 0 at T→0 (at particle-hole symmetry) becomes a hallmark of SC-induced two-stage Kondo effect\n- In absence of SC, G_min = 0 at particle-hole symmetry\n- Different spectral function shapes compared to conventional Kondo peaks\n\n### 5. **Counterintuitive Result**\nThe paper highlights a \"beautiful example\" where superconductivity, instead of competing with magnetic order, actually **leads to magnetic order** through the formation of Kondo singlets via CAR exchange.\n\n### 6. **Practical Implications**\n- The effect provides a new pathway to control and engineer Kondo physics in hybrid quantum devices\n- CAR exchange magnitude can be directly related to measurable energy scales like T_K\n- Opens possibilities for novel spintronic applications combining superconductivity with magnetic correlations\n\nThis research demonstrates that superconducting proximity effects are far more nuanced than simple competition between pairing and magnetic correlations, revealing entirely new mechanisms for quantum many-body physics."
+        },
+        "relevance_t0.3_c80": {
+          "input_tokens": 5091,
+          "output_tokens": 606,
+          "compression_pct": 59.960676366496266,
+          "sonnet_cost": 0.024363,
+          "haiku_cost": 0,
+          "total_cost": 0.024363,
+          "net_saving_pct": 48.503487634749526,
+          "rouge_l": 0.3036,
+          "f1": 0.0338,
+          "judge": "NO",
+          "judge_cost": 7.400000000000001e-05,
+          "output": "Based on this research paper, the proximity of superconductivity has several important effects on the Kondo effect:\n\n## Main Effects of Superconducting Proximity\n\n### 1. **CAR Exchange-Induced Kondo Screening**\nThe most significant finding is that **crossed Andreev reflection (CAR) exchange can be the sole cause of Kondo screening**. This represents a new mechanism where:\n- Non-local pairing induced by superconducting proximity creates CAR exchange processes\n- These processes can lead to a **two-stage Kondo effect** even without direct exchange interactions\n- The CAR exchange arises when Cooper pairs from the superconductor interact with both quantum dots simultaneously\n\n### 2. **Competition vs. Enhancement**\nThe effect depends on the relative energy scales:\n- **Suppression**: When the superconducting gap $2\\Delta$ becomes larger than the Kondo temperature $T_K$, superconductivity tends to suppress the conventional Kondo effect\n- **Enhancement**: In the sub-gap transport regime, SC proximity can enhance the Kondo effect through CAR processes\n- **New Physics**: For double quantum dots, SC proximity enables entirely new Kondo screening scenarios\n\n### 3. **Two-Stage Kondo Effect**\nThe proximity effect creates a distinctive two-stage screening process:\n- **First stage**: Conventional Kondo screening at temperature $T_K$\n- **Second stage**: Additional screening at lower temperature $T^*$, where:\n  $$T^* = a T_K \\exp(-b T_K / J_{\\text{eff}})$$\n- The effective exchange $J_{\\text{eff}}$ includes contributions from CAR processes\n\n### 4. **Transport Signatures**\nThe SC proximity creates measurable effects:\n- **Residual conductance**: $G_{\\min} > 0$ at $T \\to 0$ becomes a hallmark of SC-induced effects\n- **Modified temperature dependence**: The conductance $G(T)$ shows characteristic behavior different from conventional Kondo effect\n- **Spectral changes**: The spectral function $\\mathcal{A}(\\omega)$ exhibits peaks with shapes significantly different from standard Kondo peaks\n\n### 5. **Counterintuitive Result**\nPerhaps most remarkably, while one might expect pairing to compete with magnetic ordering, **the CAR exchange represents a case where superconductivity actually leads to magnetic order** - specifically, the formation of Kondo singlets.\n\nThis work demonstrates that superconducting proximity doesn't simply suppress magnetic correlations, but can create entirely new exchange mechanisms that fundamentally alter the magnetic ground state of quantum dot systems."
+        }
+      }
+    },
+    {
+      "dataset": "multifieldqa_en",
+      "index": 133,
+      "context_words": 8205,
+      "query": "What is the advantage of decorrelating the data before running the PLS algorithm?",
+      "answers": [
+        "Decorrelating the data before running the PLS algorithm improves the performance of the algorithm."
+      ],
+      "baseline": {
+        "input_tokens": 12896,
+        "output_tokens": 401,
+        "cost": 0.044703,
+        "f1": 0.0793,
+        "judge": "YES",
+        "judge_cost": 6.187500000000001e-05
+      },
+      "baseline_output": "Based on the paper, decorrelating the data before running the PLS (Partial Least Squares) algorithm provides several key advantages:\n\n## Theoretical Foundation\n\nThe main theoretical advantage is that decorrelating transforms the dependent regression problem into a standard independent regression problem. Specifically:\n\n- **Original problem**: Y = Xβ + ε (where observations are correlated over time)\n- **After decorrelation**: Σ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε (resulting in independent errors)\n\n## Improved Performance\n\nThe paper demonstrates significant performance improvements in the protein dynamics application:\n\n- **With decorrelation**: Using just one PLS component achieved a correlation of **0.54** between true and predicted values on the test set\n- **Without decorrelation**: The correlation was **close to zero** when ignoring dependence in the data\n\n## Enhanced Interpretability\n\nFor biological applications, decorrelation enables more accurate estimation of the **ensemble-weighted maximally correlated mode (ewMCM)**, which represents:\n- The collective mode of atoms with the highest probability to achieve specific alterations in the response variable\n- Critical information for understanding which atomic motions are responsible for protein channel opening\n\n## Convergence Rate Benefits\n\nThe authors reference Singer et al.'s work showing that:\n- PLS algorithm convergence rates are improved when applied to decorrelated data\n- This is particularly important for dependent observations where ignoring correlation structure can lead to suboptimal performance\n\n## Practical Impact\n\nThe dramatic difference in performance (correlation of 0.54 vs. near 0) demonstrates that **accounting for dependence structure is crucial** for accurate prediction and interpretation in time series regression problems, especially in high-dimensional settings like molecular dynamics simulations.",
+      "strategies": {
+        "llmlingua2": {
+          "input_tokens": 7322,
+          "output_tokens": 329,
+          "compression_pct": 43.2227047146402,
+          "sonnet_cost": 0.026901,
+          "haiku_cost": 0,
+          "total_cost": 0.026901,
+          "net_saving_pct": 39.82283068250453,
+          "rouge_l": 0.2616,
+          "f1": 0.0976,
+          "judge": "YES",
+          "judge_cost": 5.2875000000000005e-05,
+          "output": "Based on the information provided in the document, the advantage of decorrelating the data before running the PLS (Partial Least Squares) algorithm is:\n\n**Improved prediction performance**: The decorrelated data leads to better performance of the PLS algorithm, particularly for small components.\n\nSpecifically, the document shows that:\n\n1. **Higher correlation with true values**: When PLS is applied to decorrelated data (using the estimated covariance matrix Σ), the correlation between the true channel diameter and the prediction is **0.54**, compared to a correlation **close to zero** when PLS ignores the dependence structure.\n\n2. **Better handling of dependence structure**: The original data Y has correlation structure due to temporal dependence (the data shows moderate long-range dependence with a Hurst exponent of 0.85). By decorrelating the data using Σ^(-1/2)Y, the PLS algorithm can work more effectively since it's designed for independent observations.\n\n3. **More accurate feature extraction**: Since PLS performs dimensionality reduction to find a small-dimensional representation of the protein's atomic dynamics, accounting for the dependence structure through decorrelation allows it to identify the most relevant features more accurately.\n\nThe document emphasizes that \"decorrelating data PLS algorithm improves performance\" and that this improvement is crucial for applications like protein dynamics analysis, where understanding the collective motions and identifying the most important structural features depends on properly accounting for the temporal correlations in the molecular dynamics simulation data."
+        },
+        "semantic_0.5": {
+          "input_tokens": 2378,
+          "output_tokens": 487,
+          "compression_pct": 81.56017369727047,
+          "sonnet_cost": 0.014439,
+          "haiku_cost": 0.003091,
+          "total_cost": 0.01753,
+          "net_saving_pct": 60.78562959980315,
+          "rouge_l": 0.2514,
+          "f1": 0.0567,
+          "judge": "YES",
+          "judge_cost": 6.3e-05,
+          "output": "Based on the protein dynamics application described in the paper, decorrelating the data before running PLS provides several key advantages:\n\n## Primary Advantage: Accounting for Temporal Dependence\n\nThe main advantage is that it **properly accounts for the temporal correlation structure** in the time series data. In the protein dynamics example:\n\n- The observations Y_t (channel diameter measurements) are **not independent over time** - they exhibit temporal correlation\n- Standard PLS assumes independence between observations, which violates the actual data structure\n- By pre-multiplying the data by Σ̂^(-1/2) (where Σ̂ is the estimated covariance matrix), the method **decorrelates the observations**, making them approximately independent\n\n## Concrete Performance Improvement\n\nThe paper demonstrates dramatic improvement in predictive performance:\n\n- **Standard PLS**: Correlation between true opening diameter and prediction ≈ **0.00** (near zero)\n- **PLS on decorrelated data**: Correlation = **0.54** \n\nThis represents a substantial improvement from essentially no predictive power to meaningful correlation.\n\n## Why This Matters Statistically\n\n1. **Violation of Assumptions**: Standard PLS assumes independent observations. When data are temporally correlated, this assumption is violated, leading to:\n   - Inefficient parameter estimates\n   - Incorrect uncertainty quantification\n   - Poor predictive performance\n\n2. **Proper Weighting**: The decorrelation process effectively gives appropriate weights to observations based on their correlation structure, rather than treating all observations as equally informative.\n\n3. **Signal Enhancement**: By removing the correlation structure, the method can better identify the true signal (relationship between atomic distances and channel diameter) from the noise introduced by temporal dependence.\n\n## Biological Interpretation\n\nIn the context of protein dynamics, this improvement allows researchers to:\n- More accurately identify which atomic motions are responsible for channel opening\n- Better estimate the \"ensemble-weighted maximally correlated mode\" \n- Obtain more reliable insights into the collective atomic motions that drive the biological function\n\nThe decorrelation step essentially \"cleans\" the data by removing the temporal correlation noise, allowing the underlying biological signal to be more clearly detected by the PLS algorithm."
+        },
+        "semantic_0.6": {
+          "input_tokens": 1833,
+          "output_tokens": 431,
+          "compression_pct": 85.78629032258065,
+          "sonnet_cost": 0.011963999999999999,
+          "haiku_cost": 0.002750375,
+          "total_cost": 0.014714374999999998,
+          "net_saving_pct": 67.0841442408787,
+          "rouge_l": 0.2841,
+          "f1": 0.0627,
+          "judge": "NO",
+          "judge_cost": 6.275000000000001e-05,
+          "output": "Based on the paper, decorrelating the data before running the PLS algorithm provides several key advantages:\n\n## Primary Advantage: Handling Dependent Observations\n\nThe main advantage is that **PLS assumes independent observations**, but in the protein dynamics application, the observations are **temporally dependent** (molecular dynamics simulation data collected over time). Without decorrelation:\n\n- Standard PLS treats observations as independent when they're actually correlated\n- This leads to incorrect variance estimates and poor predictive performance\n- The correlation structure contains important information that gets ignored\n\n## Specific Benefits Demonstrated\n\n1. **Dramatic Performance Improvement**: The paper shows that with decorrelation using the VST-DCT estimator, the correlation between true and predicted channel diameter improved from **~0 to 0.54** with just one PLS component - a substantial gain.\n\n2. **Proper Covariance Structure**: The decorrelation step using the Toeplitz covariance estimator properly accounts for the temporal correlation structure in the molecular dynamics data, rather than assuming independence.\n\n3. **Statistical Validity**: By first modeling and removing the correlation structure, the subsequent PLS analysis operates on approximately independent residuals, making the statistical assumptions more valid.\n\n## Methodological Context\n\nIn the protein dynamics application, they're modeling:\n- **Response**: Channel diameter over time (temporally correlated)\n- **Predictors**: High-dimensional atomic position data (783 atoms)\n- **Goal**: Identify collective atomic motions responsible for channel opening\n\nThe temporal correlation in both response and predictors needs to be properly handled. The VST-DCT approach:\n1. Estimates the Toeplitz covariance structure of the dependent observations\n2. Uses this to decorrelate the data \n3. Applies PLS to the decorrelated data where independence assumptions are more reasonable\n\nThis represents a principled way to extend PLS (designed for independent data) to handle temporally dependent observations common in time series applications."
+        },
+        "semantic_0.7": {
+          "input_tokens": 1693,
+          "output_tokens": 452,
+          "compression_pct": 86.87189826302729,
+          "sonnet_cost": 0.011859,
+          "haiku_cost": 0.0026628750000000003,
+          "total_cost": 0.014521875,
+          "net_saving_pct": 67.51476410979129,
+          "rouge_l": 0.2408,
+          "f1": 0.064,
+          "judge": "NO",
+          "judge_cost": 6.7e-05,
+          "output": "Based on the protein dynamics application described in the paper, decorrelating the data before running the PLS algorithm provides several key advantages:\n\n## Primary Advantage: Accounting for Temporal Dependence\n\nThe main advantage is that it **accounts for the temporal correlation structure** in the molecular dynamics data. The protein atom coordinates exhibit strong temporal dependence over time, which violates the independence assumption typically made in standard regression methods like PLS.\n\n## Dramatic Performance Improvement\n\nThe paper shows a **striking empirical improvement**:\n- **Without decorrelation**: Correlation between true and predicted channel diameter ≈ 0\n- **With VST-DCT decorrelation**: Correlation increases to 0.54\n\nThis represents a substantial improvement from essentially no predictive power to meaningful predictive capability.\n\n## Theoretical Justification\n\nWhen data has a covariance structure Σ, decorrelating via the transformation Σ^(-1/2) converts the data to have identity covariance structure. This:\n\n1. **Removes spurious correlations** that arise from temporal dependence rather than true predictive relationships\n2. **Allows PLS to focus on genuine signal** rather than being confounded by the correlation structure\n3. **Satisfies independence assumptions** that underlie the PLS algorithm's optimality properties\n\n## Practical Advantages of VST-DCT Approach\n\nThe authors note that their VST-DCT estimator is particularly well-suited for this decorrelation because it is:\n- **Fully data-driven** (no parameter tuning required)\n- **Automatically positive definite** (ensuring Σ^(-1/2) exists)\n- **Computationally efficient** for high-dimensional data\n\nIn contrast, alternative methods like tapering may require manual adjustments to ensure positive definiteness, making them less reliable for this preprocessing step.\n\nThe decorrelation essentially \"whitens\" the data, allowing PLS to operate on the intrinsic signal rather than being misled by the temporal correlation structure inherent in the molecular dynamics simulation."
+        },
+        "semantic_0.8": {
+          "input_tokens": 2550,
+          "output_tokens": 502,
+          "compression_pct": 80.22642679900744,
+          "sonnet_cost": 0.015179999999999999,
+          "haiku_cost": 0.0031985,
+          "total_cost": 0.0183785,
+          "net_saving_pct": 58.88754669708969,
+          "rouge_l": 0.213,
+          "f1": 0.0548,
+          "judge": "YES",
+          "judge_cost": 6.387500000000001e-05,
+          "output": "Based on the protein dynamics application in the paper, decorrelating the data before running the PLS (Partial Least Squares) algorithm provides several key advantages:\n\n## Improved Prediction Performance\n\nThe most significant advantage demonstrated is a dramatic improvement in predictive accuracy:\n- **With decorrelation**: correlation = 0.54 between predicted and actual channel diameter\n- **Without decorrelation**: correlation ≈ 0 (essentially no predictive power)\n\nThis represents a substantial improvement from no predictive ability to moderate predictive success.\n\n## Addressing Temporal Dependence\n\nThe protein dynamics data exhibits strong temporal correlation characteristics:\n- **Hurst exponent of 0.85** indicates moderate long-range dependence\n- **Slow autocovariance decay** means observations are highly correlated across time\n- Standard PLS assumes independence, which is severely violated in this time series context\n\n## Why Decorrelation Helps PLS\n\n1. **Independence Assumption**: PLS algorithms typically assume independent observations. When data points are highly correlated (as in time series), the effective sample size is much smaller than the nominal sample size, leading to poor performance.\n\n2. **Redundant Information**: Highly correlated observations contain redundant information. Without decorrelation, PLS may struggle to extract meaningful patterns from what is essentially repeated information.\n\n3. **Variance Structure**: Decorrelation helps PLS better understand the true underlying variance structure of the data, allowing it to identify genuine signal rather than being misled by temporal correlation patterns.\n\n## Methodological Advantages\n\nThe VST-DCT decorrelation method offers practical benefits:\n- **Fully data-driven**: No manual parameter tuning required\n- **Automatically positive definite**: Ensures numerical stability\n- **Handles long-memory processes**: Effective even with strong temporal dependence\n- **Fast computation**: Efficient for high-dimensional time series\n\nIn contrast, alternative methods like tapering estimators were \"not data-driven for n=1 case, required manual subseries selection, [and] proved non-positive-definite.\"\n\nThe decorrelation essentially transforms the correlated time series into a form where PLS can operate effectively, recovering the underlying relationship between protein atom distances and channel diameter that was obscured by the temporal correlation structure."
+        },
+        "relevance_t0.7_c10": {
+          "input_tokens": 414,
+          "output_tokens": 397,
+          "compression_pct": 96.78970223325062,
+          "sonnet_cost": 0.007197,
+          "haiku_cost": 0,
+          "total_cost": 0.007197,
+          "net_saving_pct": 83.90040936849876,
+          "rouge_l": 0.2957,
+          "f1": 0.0917,
+          "judge": "YES",
+          "judge_cost": 6.1375e-05,
+          "output": "Based on the text, the main advantage of decorrelating the data before running the PLS (Partial Least Squares) algorithm is **significantly improved performance, especially when using a small number of components**.\n\nHere are the key advantages mentioned:\n\n## 1. **Better Convergence Properties**\n- Singer et al. demonstrated that decorrelating data improves the convergence rates of the PLS algorithm for dependent observations\n\n## 2. **Dramatically Better Performance with Few Components**\n- The text states that \"the performance of the PLS algorithm on the decorrelated data is significantly better for the small number of components\"\n- This is particularly valuable since PLS is often used specifically to create low-dimensional representations\n\n## 3. **Concrete Empirical Evidence**\nThe text provides a striking example:\n- **With decorrelated data**: Using just one PLS component achieved a correlation of **0.54** between true and predicted values\n- **Without decorrelating**: The correlation was **close to zero** when ignoring data dependence\n\n## 4. **Theoretical Foundation**\n- Decorrelating transforms the problem into a standard linear regression with independent errors: Σ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε\n- This removes the complications that arise from correlated observations\n\n## 5. **Robust Low-Dimensional Representation**\n- Enables identification of the most relevant features (in this case, atomic dynamics relevant for protein channel diameter) with minimal components\n- Creates a \"small-dimensional and robust representation\"\n\nThe decorrelation process essentially removes the statistical dependencies that can interfere with PLS's ability to find the most informative linear combinations of predictors, allowing it to work much more effectively with fewer components."
+        },
+        "relevance_t0.5_c20": {
+          "input_tokens": 749,
+          "output_tokens": 400,
+          "compression_pct": 94.19199751861042,
+          "sonnet_cost": 0.008247,
+          "haiku_cost": 0,
+          "total_cost": 0.008247,
+          "net_saving_pct": 81.55157371988457,
+          "rouge_l": 0.2578,
+          "f1": 0.0826,
+          "judge": "YES",
+          "judge_cost": 6.175000000000001e-05,
+          "output": "Based on the text provided, the main advantage of decorrelating the data before running the PLS algorithm is **significantly improved performance, especially when using a small number of components**.\n\nHere are the key advantages mentioned:\n\n## 1. **Dramatically Better Performance with Few Components**\nThe text explicitly states that \"the performance of the PLS algorithm on the decorrelated data is significantly better for the small number of components.\"\n\n## 2. **Much Higher Predictive Accuracy**\nThe protein dynamics example demonstrates this improvement quantitatively:\n- **With decorrelated data**: Correlation between true and predicted values = **0.54** (using just one PLS component)\n- **Without decorrelating**: Correlation is **\"close to zero\"**\n\nThis represents a dramatic improvement from essentially no predictive power to moderate predictive accuracy.\n\n## 3. **Theoretical Foundation**\nDecorrelating transforms the problem into a more tractable form:\n- Original problem: `Y = Xβ + ε` (with dependent errors)\n- After decorrelating: `Σ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε`\n\nThis results in \"standard linear regression with independent errors,\" which is the ideal setting for PLS to perform optimally.\n\n## 4. **Robust Low-Dimensional Representation**\nThe decorrelated PLS approach leads to a \"small-dimensional and robust representation\" that can better identify the relevant underlying patterns in the data.\n\nThe core insight is that when data points are dependent (correlated), the standard PLS algorithm struggles because it assumes independence. By decorrelating first, we remove this dependence structure and allow PLS to work in its optimal setting, leading to much better performance with fewer components."
+        },
+        "relevance_t0.3_c30": {
+          "input_tokens": 1119,
+          "output_tokens": 412,
+          "compression_pct": 91.32289081885855,
+          "sonnet_cost": 0.009537,
+          "haiku_cost": 0,
+          "total_cost": 0.009537,
+          "net_saving_pct": 78.66586135158715,
+          "rouge_l": 0.3133,
+          "f1": 0.0779,
+          "judge": "YES",
+          "judge_cost": 6.325e-05,
+          "output": "Based on the text, the main advantage of decorrelating the data before running the PLS algorithm is **significantly improved performance, especially when using a small number of components**.\n\nHere are the key advantages mentioned:\n\n## 1. **Dramatically Better Performance with Few Components**\nThe text states that \"the performance of the PLS algorithm on the decorrelated data is significantly better for the small number of components.\" This is crucial because PLS is often used specifically to achieve dimensionality reduction with minimal components.\n\n## 2. **Substantial Improvement in Predictive Accuracy**\nThe protein dynamics example provides a striking illustration:\n- **With decorrelated data**: Using just one PLS component achieved a correlation of **0.54** between true and predicted values on the test set\n- **Without decorrelation**: The correlation was **close to zero** when ignoring data dependence\n\nThis represents a massive improvement in predictive performance.\n\n## 3. **Theoretical Foundation**\nThe decorrelation process transforms the problem into a more tractable form:\n- Original problem: `Y = Xβ + ε` (with dependent errors)\n- After decorrelation: `Σ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε`\n\nThis results in \"a standard linear regression with independent errors,\" which is the ideal setting for PLS to perform optimally.\n\n## 4. **Robust Representation**\nThe decorrelated PLS approach leads to a \"small-dimensional and robust representation\" that can better identify the relevant underlying patterns in the data.\n\nThe key insight is that when data points are dependent (as is common in time series, spatial data, or other structured datasets), ignoring this dependence severely hampers PLS performance, while properly accounting for it through decorrelation can dramatically improve results."
+        },
+        "relevance_t0.3_c50": {
+          "input_tokens": 1939,
+          "output_tokens": 393,
+          "compression_pct": 84.96433002481389,
+          "sonnet_cost": 0.011712,
+          "haiku_cost": 0,
+          "total_cost": 0.011712,
+          "net_saving_pct": 73.80041607945775,
+          "rouge_l": 0.2566,
+          "f1": 0.0877,
+          "judge": "YES",
+          "judge_cost": 6.0875e-05,
+          "output": "Based on the text, the main advantage of decorrelating the data before running the PLS algorithm is **significantly improved performance, especially when using a small number of components**.\n\nHere are the key advantages mentioned:\n\n## 1. **Dramatic Performance Improvement**\nThe text shows a striking example from protein dynamics data:\n- **With decorrelated data**: Correlation of 0.54 between true opening diameter and prediction using just one PLS component\n- **Without decorrelating (ignoring dependence)**: Correlation close to zero with the same single component\n\n## 2. **Better Convergence Rates**\nSinger et al. demonstrated that decorrelating dependent observations improves the convergence rates of the PLS algorithm, making it more efficient and reliable.\n\n## 3. **Transforms to Standard Linear Regression**\nThe decorrelation process transforms the problem into a more tractable form:\n```\nΣ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε\n```\nThis results in a standard linear regression with independent errors, which is much easier to handle algorithmically.\n\n## 4. **More Efficient Use of Data**\nThe decorrelation allows for \"more efficient use of the data Y to estimate the parameter of interest,\" leading to better parameter estimation and model performance.\n\n## 5. **Particularly Beneficial for Small Components**\nThe text specifically notes that \"the performance of the PLS algorithm on the decorrelated data is significantly better for the small number of components,\" which is important since PLS often aims to achieve good performance with minimal dimensionality.\n\nThis improvement is crucial in applications like protein dynamics analysis, where identifying relevant atomic movements with minimal components is essential for interpretability and computational efficiency."
+        },
+        "relevance_t0.3_c80": {
+          "input_tokens": 3262,
+          "output_tokens": 442,
+          "compression_pct": 74.70533498759305,
+          "sonnet_cost": 0.016416,
+          "haiku_cost": 0,
+          "total_cost": 0.016416,
+          "net_saving_pct": 63.277632373666194,
+          "rouge_l": 0.252,
+          "f1": 0.0747,
+          "judge": "YES",
+          "judge_cost": 6.7e-05,
+          "output": "Based on the paper, the main advantage of decorrelating the data before running the PLS algorithm is **dramatically improved performance, especially when using a small number of components**.\n\nHere are the key advantages mentioned:\n\n## 1. **Significantly Better Performance with Few Components**\nThe paper states that \"the performance of the PLS algorithm on the decorrelated data is significantly better for the small number of components.\" This is crucial because PLS is often used specifically to achieve dimensionality reduction with minimal components.\n\n## 2. **Substantial Improvement in Predictive Accuracy**\nThe real-world protein dynamics example demonstrates this dramatically:\n- **With decorrelated data**: Correlation between true opening diameter and prediction using just **one PLS component** = **0.54**\n- **Without decorrelating**: Correlation is **\"close to zero\"**\n\nThis represents a massive improvement from essentially no predictive power to moderate-strong predictive ability.\n\n## 3. **Theoretical Foundation**\nThe decorrelation process transforms the problem into a standard linear regression with independent errors:\n```\nΣ^(-1/2)Y = Σ^(-1/2)Xβ + Σ^(-1/2)ε\n```\nThis removes the dependence structure that can interfere with PLS performance.\n\n## 4. **Robust Dimensionality Reduction**\nThe paper notes that PLS on decorrelated data leads to \"a small-dimensional and robust representation\" that can \"identify the atomic dynamics relevant for Y.\"\n\n## 5. **Addresses Fundamental PLS Limitation**\nStandard PLS assumes independence in the data. When this assumption is violated (as with dependent/correlated observations), decorrelating first allows PLS to work as intended, recovering its theoretical performance guarantees.\n\nThe improvement is so substantial that it transforms PLS from essentially useless (correlation ≈ 0) to quite effective (correlation = 0.54) with just a single component in their protein dynamics application."
+        }
+      }
+    },
+    {
+      "dataset": "narrativeqa",
+      "index": 2,
+      "context_words": 5391,
+      "query": "Where does the witch live?",
+      "answers": [
+        "The Atlas Mountains"
+      ],
+      "baseline": {
+        "input_tokens": 9727,
+        "output_tokens": 134,
+        "cost": 0.031191000000000003,
+        "f1": 0.0235,
+        "judge": "YES",
+        "judge_cost": 2.4999999999999998e-05
+      },
+      "baseline_output": "According to the poem, the witch lives on Atlas' mountain within a cavern by a secret fountain. Specifically, the text states:\n\n\"A lady-witch there lived on Atlas' mountain\nWithin a cavern, by a secret fountain.\"\n\nThe poem describes her dwelling as having deep recesses filled with magical treasures, and she spends her time in this cave which is lit by the fountain's light. The cavern becomes warm with her presence and serves as her magical home where she stores various enchanted items like sounds of air, visions, odours, liquors, scrolls, and other wondrous works.",
+      "strategies": {
+        "llmlingua2": {
+          "input_tokens": 6006,
+          "output_tokens": 134,
+          "compression_pct": 38.25434357972654,
+          "sonnet_cost": 0.020028000000000004,
+          "haiku_cost": 0,
+          "total_cost": 0.020028000000000004,
+          "net_saving_pct": 35.78916995287101,
+          "rouge_l": 0.4066,
+          "f1": 0.0533,
+          "judge": "YES",
+          "judge_cost": 2.4999999999999998e-05,
+          "output": "Based on the poem, the witch lives in a cavern on Mount Atlas. The text specifically mentions:\n\n- \"lady-witch Atlas' mountain\" (line 54)\n- \"cavern secret fountain\" (line 55)\n- \"chamber gray rock\" (line 63)\n\nThe poem describes her dwelling as a cave or cavern located in the Atlas mountains, near a secret fountain. This cavern serves as her magical home where she stores her enchanted treasures, scrolls, and various magical implements. The setting is portrayed as a mystical, secluded place befitting a supernatural being like the witch."
+        },
+        "semantic_0.5": {
+          "input_tokens": 2606,
+          "output_tokens": 192,
+          "compression_pct": 73.2085946334944,
+          "sonnet_cost": 0.010698,
+          "haiku_cost": 0.002845625,
+          "total_cost": 0.013543625,
+          "net_saving_pct": 56.578420057067746,
+          "rouge_l": 0.3863,
+          "f1": 0.016,
+          "judge": "YES",
+          "judge_cost": 3.2250000000000005e-05,
+          "output": "According to the poem, the witch lives on Atlas mountain in a cavern by a secret fountain. Shelley describes her dwelling as:\n\n\"Before Error and Truth hunted bright natures from Earth, a lady-witch lived on Atlas mountain within a cavern by a secret fountain.\"\n\nThe poem later provides more details about her cavern dwelling, describing it as storing magical treasures including \"sounds of air that compelled spirits; visions in chrysalis-like sheaths; odours in floating nets; liquors that could heal sick souls.\" The cavern also contains scrolls with ancient wisdom, carved lamps, and chalices that glow beneath cypresses.\n\nAdditionally, the witch has a fountain within this cavern where she lies in trance, \"watching constellations dance like fireflies through green water.\" So her primary residence is this magical cavern on Mount Atlas, situated near a secret fountain."
+        },
+        "semantic_0.6": {
+          "input_tokens": 1828,
+          "output_tokens": 132,
+          "compression_pct": 81.20694972756246,
+          "sonnet_cost": 0.007464,
+          "haiku_cost": 0.0023593750000000004,
+          "total_cost": 0.009823375,
+          "net_saving_pct": 68.50573883492032,
+          "rouge_l": 0.4731,
+          "f1": 0.026,
+          "judge": "YES",
+          "judge_cost": 2.475e-05,
+          "output": "According to the poem, the witch lives on Atlas mountain in a secret cavern by a fountain. Specifically, the text states:\n\n\"Before Error and Truth hunted Earth's bright natures away, a lady-witch lived on Atlas mountain in a secret cavern by a fountain.\"\n\nHer dwelling is described as containing magical treasures including crystalline sounds, visions, bottled odors, ancient scrolls, and various wondrous artifacts. The cavern also has a hearth that blazes with sandalwood and spices, and a fountain where she lies in trance-like states observing the stars."
+        },
+        "semantic_0.7": {
+          "input_tokens": 2445,
+          "output_tokens": 175,
+          "compression_pct": 74.86378122751105,
+          "sonnet_cost": 0.00996,
+          "haiku_cost": 0.002745,
+          "total_cost": 0.012705000000000001,
+          "net_saving_pct": 59.26709627777244,
+          "rouge_l": 0.3628,
+          "f1": 0.0165,
+          "judge": "YES",
+          "judge_cost": 3.0125e-05,
+          "output": "According to the poem, the witch lives on Atlas mountain in a cavern by a secret fountain. Shelley describes her dwelling as being located \"on Atlas mountain in a cavern by a secret fountain\" where she has made her home.\n\nThe poem also provides rich details about her magical dwelling, describing it as containing various enchanted treasures including \"sounds of compelling power, visions in chrysalis form, odors in crystal cells, and liquors that could medicine sick souls.\" Her bower is filled with wondrous carved objects that were transformed by her father's enchantment.\n\nAdditionally, the witch has different seasonal locations within her domain - she spends time in trance within her fountain, and when winter winds come, she moves to \"a flowering lawn where an inextinguishable well of crimson fire blazed.\""
+        },
+        "semantic_0.8": {
+          "input_tokens": 1770,
+          "output_tokens": 130,
+          "compression_pct": 81.80322812789143,
+          "sonnet_cost": 0.007260000000000001,
+          "haiku_cost": 0.002323125,
+          "total_cost": 0.009583125000000001,
+          "net_saving_pct": 69.27599307492545,
+          "rouge_l": 0.4468,
+          "f1": 0.0241,
+          "judge": "YES",
+          "judge_cost": 2.45e-05,
+          "output": "According to the poem, the witch lives on Atlas' mountain in a secret cavern by a fountain. Specifically, Shelley writes:\n\n\"a lady-witch lived on Atlas' mountain within a secret cavern by a fountain\"\n\nThe cavern is described as containing magical treasures like crystal cells with compelling sounds, visions, healing liquors, ancient scrolls, and wondrous carved works. This serves as her primary dwelling place, though she also travels extensively in her magical boat, particularly enjoying trips down the Nile through Egypt and Ethiopia, and to various other mystical locations across the world."
+        },
+        "relevance_t0.7_c10": {
+          "input_tokens": 409,
+          "output_tokens": 196,
+          "compression_pct": 95.79520921147322,
+          "sonnet_cost": 0.004167,
+          "haiku_cost": 0,
+          "total_cost": 0.004167,
+          "net_saving_pct": 86.6403770318361,
+          "rouge_l": 0.1532,
+          "f1": 0.0168,
+          "judge": "NO",
+          "judge_cost": 3.275e-05,
+          "output": "Based on the text fragments provided from Percy Bysshe Shelley's \"The Witch of Atlas,\" the poem mentions several locations associated with the witch, including:\n\n- \"By Moeris and the Mareotid lakes\" - These are references to lakes in ancient Egypt (Lake Moeris and Lake Mareotis)\n- Areas where \"the fountains where the Naiades bedew their shining hair\" - suggesting she dwells near mythological water sources\n\nHowever, the fragments provided don't give a complete or clear description of exactly where the witch lives. The poem appears to place her in a mythological landscape with Egyptian geographical references, but to fully answer where the witch's dwelling is located, one would need to read the complete poem rather than these scattered excerpts.\n\nThe fragmentary nature of the text provided makes it difficult to give a definitive answer about the witch's specific residence."
+        },
+        "relevance_t0.5_c20": {
+          "input_tokens": 1275,
+          "output_tokens": 285,
+          "compression_pct": 86.89215585483706,
+          "sonnet_cost": 0.0081,
+          "haiku_cost": 0,
+          "total_cost": 0.0081,
+          "net_saving_pct": 74.03097047225161,
+          "rouge_l": 0.1691,
+          "f1": 0.0129,
+          "judge": "NO",
+          "judge_cost": 4.3875e-05,
+          "output": "Based on the text from \"The Witch of Atlas\" by Percy Bysshe Shelley, the witch doesn't appear to have a single fixed dwelling. Instead, she seems to be a wandering, ethereal being who moves through various mystical locations.\n\nFrom the fragments provided, we can see that she travels to and through:\n\n- \"The Austral waters\" beyond \"the fabulous Thamondocana\"\n- \"By Moeris and the Mareotid lakes\" (references to Egyptian locations)\n- Rivers where \"shadows of the massy temples lie\"\n- \"Lotus-paven canals\" \n- A space with \"a lawn of flowering asphodel / Amid a wood of pines and cedars blended\" where there was \"an inextinguishable well / Of crimson fire\"\n- Various waters where she could take her way \"in the calm depths\" among \"bright bowers\" where \"immortal forms abide\"\n\nThe poem suggests she wanders \"in the shadow of the night\" through temples, towers, and other mystical places. Rather than having a conventional home, she appears to be a supernatural being who moves freely through an enchanted landscape of lakes, rivers, and otherworldly locations, particularly associated with ancient Egyptian and mythological settings."
+        },
+        "relevance_t0.3_c30": {
+          "input_tokens": 2082,
+          "output_tokens": 82,
+          "compression_pct": 78.5956615606045,
+          "sonnet_cost": 0.007476,
+          "haiku_cost": 0,
+          "total_cost": 0.007476,
+          "net_saving_pct": 76.03154756179667,
+          "rouge_l": 0.5385,
+          "f1": 0.0385,
+          "judge": "YES",
+          "judge_cost": 1.85e-05,
+          "output": "According to the poem, the witch lives on Atlas' mountain within a cavern by a secret fountain. This is stated in stanza 19:\n\n\"A lady-witch there lived on Atlas' mountain\nWithin a cavern, by a secret fountain.\"\n\nThe poem describes her cave as being stored with scrolls of strange device and mentions that she has an emerald throne there."
+        },
+        "relevance_t0.3_c50": {
+          "input_tokens": 3415,
+          "output_tokens": 103,
+          "compression_pct": 64.89153901511257,
+          "sonnet_cost": 0.01179,
+          "haiku_cost": 0,
+          "total_cost": 0.01179,
+          "net_saving_pct": 62.200634798499564,
+          "rouge_l": 0.5287,
+          "f1": 0.0303,
+          "judge": "YES",
+          "judge_cost": 2.1125e-05,
+          "output": "According to the poem, the witch lives on Atlas' mountain within a cavern by a secret fountain. This is stated in the lines:\n\n\"A lady-witch there lived on Atlas' mountain\nWithin a cavern, by a secret fountain.\"\n\nThe poem describes her cave as being stored with scrolls and made of gray rock, which was made golden by the sun's beams. It's also mentioned that she sits \"upon a seat of emerald stone\" within this cave."
+        },
+        "relevance_t0.3_c80": {
+          "input_tokens": 5081,
+          "output_tokens": 118,
+          "compression_pct": 47.76395599876631,
+          "sonnet_cost": 0.017013,
+          "haiku_cost": 0,
+          "total_cost": 0.017013,
+          "net_saving_pct": 45.45541983264404,
+          "rouge_l": 0.6848,
+          "f1": 0.0267,
+          "judge": "YES",
+          "judge_cost": 2.3e-05,
+          "output": "According to the poem, the witch lives on Atlas' mountain within a cavern by a secret fountain. Specifically, the text states:\n\n\"A lady-witch there lived on Atlas' mountain\nWithin a cavern, by a secret fountain.\"\n\nThe poem describes her dwelling as having deep, odorous recesses stored with magical treasures, and mentions that she has an emerald throne. The cavern is lit by the fountain's light and contains various magical items and scrolls. This mountain cave serves as her home and the center of her magical activities."
+        }
+      }
+    },
+    {
+      "dataset": "narrativeqa",
+      "index": 5,
+      "context_words": 10005,
+      "query": "How long had Mortimer Trefinnis' sister been dead when the doctor examined the body?",
+      "answers": [
+        "Six hours."
+      ],
+      "baseline": {
+        "input_tokens": 14279,
+        "output_tokens": 108,
+        "cost": 0.044456999999999997,
+        "f1": 0.0597,
+        "judge": "YES",
+        "judge_cost": 2.3625e-05
+      },
+      "baseline_output": "According to the text, when Dr. Richards examined Brenda Tregennis' body, he determined that she \"must have been dead at least six hours.\"\n\nThis assessment was made in the morning when Mortimer Tregennis and Dr. Richards arrived at the house, after Mortimer had left his siblings the previous evening at around 10:15 PM. The doctor's examination suggested that Brenda had died sometime during the night, likely not long after Mortimer's departure.",
+      "strategies": {
+        "llmlingua2": {
+          "input_tokens": 8653,
+          "output_tokens": 60,
+          "compression_pct": 39.40051824357448,
+          "sonnet_cost": 0.026859000000000004,
+          "haiku_cost": 0,
+          "total_cost": 0.026859000000000004,
+          "net_saving_pct": 39.58431743032592,
+          "rouge_l": 0.3866,
+          "f1": 0.0976,
+          "judge": "NO",
+          "judge_cost": 1.7625e-05,
+          "output": "According to the text, when the doctor examined Brenda Tregennis's body, he said that \"Brenda must dead at six hours.\" This indicates that she had been dead for approximately six hours by the time the doctor arrived to examine her body in the morning."
+        },
+        "semantic_0.5": {
+          "input_tokens": 1813,
+          "output_tokens": 214,
+          "compression_pct": 87.30303242523986,
+          "sonnet_cost": 0.008649,
+          "haiku_cost": 0.0029077499999999997,
+          "total_cost": 0.011556750000000001,
+          "net_saving_pct": 74.00465618462782,
+          "rouge_l": 0.1688,
+          "f1": 0.0,
+          "judge": "NO",
+          "judge_cost": 3.6875e-05,
+          "output": "Based on my careful reading of the text, the story does not specify how long Brenda Tregennis had been dead when the doctor examined her body.\n\nHere's what we know from the timeline:\n\n- Mortimer Tregennis left his siblings around 10 p.m. after their card game\n- He discovered them the next morning in their horrifying state - Brenda dead, and his two brothers Owen and George in a state of madness\n- The story mentions that a doctor fainted when entering the room (due to residual effects of the poisonous atmosphere)\n\nHowever, the text doesn't provide the specific time when Mortimer made his discovery the next morning, nor does it give us the exact time the doctor arrived to examine the scene. Without these details, we cannot determine the precise duration between Brenda's death and the doctor's examination.\n\nThe story focuses more on the mysterious circumstances and the method of the crime rather than providing exact timestamps for the medical examination."
+        },
+        "semantic_0.6": {
+          "input_tokens": 1912,
+          "output_tokens": 192,
+          "compression_pct": 86.60970656208417,
+          "sonnet_cost": 0.008615999999999999,
+          "haiku_cost": 0.002969625,
+          "total_cost": 0.011585624999999999,
+          "net_saving_pct": 73.93970578311627,
+          "rouge_l": 0.2085,
+          "f1": 0.0164,
+          "judge": "NO",
+          "judge_cost": 3.4125e-05,
+          "output": "Based on my careful reading of the text, the story does not specify exactly how long Brenda Tregennis had been dead when Dr. Richards examined her body.\n\nHere's what we know from the timeline:\n\n- Mortimer Tregennis left his siblings' house after 10 PM on the evening they played cards\n- The next morning, Dr. Richards found Brenda dead and her two brothers driven mad\n- Tregennis reported this to Holmes and the vicar that same day (March 16th)\n\nThe text only indicates that Dr. Richards discovered the scene \"the next morning\" after Tregennis's evening visit, but doesn't provide the specific time of discovery or death. So while we know Brenda had been dead for several hours at minimum (from sometime after 10 PM until the morning discovery), the exact duration isn't stated in the story."
+        },
+        "semantic_0.7": {
+          "input_tokens": 2041,
+          "output_tokens": 204,
+          "compression_pct": 85.70628195251768,
+          "sonnet_cost": 0.009183,
+          "haiku_cost": 0.00305025,
+          "total_cost": 0.012233250000000001,
+          "net_saving_pct": 72.48296106349954,
+          "rouge_l": 0.1913,
+          "f1": 0.0147,
+          "judge": "NO",
+          "judge_cost": 3.5625e-05,
+          "output": "Based on my careful reading of the text, the story does not specify exactly how long Brenda Tregennis had been dead when the doctor examined her body.\n\nHere's what we know from the timeline:\n\n1. Mortimer Tregennis left his siblings around 10 o'clock in the evening after playing cards\n2. He returned the next morning to find Brenda dead and his two brothers mad with terror\n3. The vicar and Mortimer then came to Holmes and Watson to report the tragedy\n\nThe text indicates that Mortimer discovered the tragedy \"next morning\" and then came to report it, but it doesn't give us the specific time of the doctor's examination or precisely when during the night Brenda died. \n\nSo while we can infer she had been dead for several hours (sometime between 10 PM the previous evening and the morning discovery), the story doesn't provide enough detail to determine the exact duration."
+        },
+        "semantic_0.8": {
+          "input_tokens": 1241,
+          "output_tokens": 166,
+          "compression_pct": 91.30891519013936,
+          "sonnet_cost": 0.006213,
+          "haiku_cost": 0.00255025,
+          "total_cost": 0.00876325,
+          "net_saving_pct": 80.28825606766088,
+          "rouge_l": 0.2079,
+          "f1": 0.0,
+          "judge": "NO",
+          "judge_cost": 3.0875000000000005e-05,
+          "output": "Based on the text provided, there is no specific information given about how long Brenda Tregennis had been dead when the doctor examined her body. \n\nThe story tells us that:\n- Mortimer left his siblings around 10 PM after playing cards\n- He discovered them the next morning in their tragic state (Brenda dead, his two brothers mad)\n- The tragedy likely occurred within minutes of his departure, based on Holmes's observation that the candles had burned down to their sockets\n\nHowever, the text doesn't mention when exactly a doctor examined Brenda's body or provide any specific timeframe for how long she had been deceased at the time of that examination. The story focuses more on the mysterious circumstances of the deaths rather than the precise medical timeline."
+        },
+        "relevance_t0.7_c10": {
+          "input_tokens": 389,
+          "output_tokens": 39,
+          "compression_pct": 97.27571958820646,
+          "sonnet_cost": 0.001752,
+          "haiku_cost": 0,
+          "total_cost": 0.001752,
+          "net_saving_pct": 96.0591133004926,
+          "rouge_l": 0.3265,
+          "f1": 0.1667,
+          "judge": "YES",
+          "judge_cost": 1.5e-05,
+          "output": "According to the text, the doctor said Brenda (Mortimer Tregennis' sister) must have been dead at least six hours when he examined her body."
+        },
+        "relevance_t0.5_c20": {
+          "input_tokens": 797,
+          "output_tokens": 28,
+          "compression_pct": 94.41837663701939,
+          "sonnet_cost": 0.002811,
+          "haiku_cost": 0,
+          "total_cost": 0.002811,
+          "net_saving_pct": 93.67703623726297,
+          "rouge_l": 0.3158,
+          "f1": 0.1905,
+          "judge": "NO",
+          "judge_cost": 1.3624999999999999e-05,
+          "output": "According to the text, the doctor said Brenda must have been dead at least six hours when he examined her body."
+        },
+        "relevance_t0.3_c30": {
+          "input_tokens": 1181,
+          "output_tokens": 39,
+          "compression_pct": 91.72911268296099,
+          "sonnet_cost": 0.004128,
+          "haiku_cost": 0,
+          "total_cost": 0.004128,
+          "net_saving_pct": 90.7146231189689,
+          "rouge_l": 0.3711,
+          "f1": 0.1739,
+          "judge": "YES",
+          "judge_cost": 1.5e-05,
+          "output": "According to the text, when the doctor examined Brenda (Mortimer Tregennis' sister), he said she \"must have been dead at least six hours.\""
+        },
+        "relevance_t0.3_c50": {
+          "input_tokens": 1984,
+          "output_tokens": 39,
+          "compression_pct": 86.10546957069822,
+          "sonnet_cost": 0.006536999999999999,
+          "haiku_cost": 0,
+          "total_cost": 0.006536999999999999,
+          "net_saving_pct": 85.29590390714623,
+          "rouge_l": 0.3711,
+          "f1": 0.1739,
+          "judge": "YES",
+          "judge_cost": 1.5e-05,
+          "output": "According to the text, when the doctor examined Brenda (Mortimer Tregennis' sister), he said she \"must have been dead at least six hours.\""
+        },
+        "relevance_t0.3_c80": {
+          "input_tokens": 3632,
+          "output_tokens": 79,
+          "compression_pct": 74.56404510119756,
+          "sonnet_cost": 0.012081000000000001,
+          "haiku_cost": 0,
+          "total_cost": 0.012081000000000001,
+          "net_saving_pct": 72.8254268169242,
+          "rouge_l": 0.3609,
+          "f1": 0.0741,
+          "judge": "YES",
+          "judge_cost": 2e-05,
+          "output": "According to the text, when the doctor examined Brenda Tregennis's body, he said she \"must have been dead at least six hours.\"\n\nThe passage states: \"The doctor said Brenda must have been dead at least six hours. There were no signs of violence. She just lay across the arm of the chair with that look on her face.\""
+        }
+      }
+    }
+  ]
+}

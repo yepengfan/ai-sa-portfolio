@@ -173,7 +173,33 @@ Compression reduces what you send. But there are other ways to cut costs: cache 
 
 ### Strategy 6: Prompt Caching — Pay Once, Reuse Cheap
 
-Bedrock's native prompt caching stores your system prompt server-side. The first call pays a 1.25x write premium; subsequent calls read cached tokens at 90% discount.
+#### What is Prompt Caching?
+
+Every time you call an LLM API, the model processes your entire input from scratch — including the system prompt, which is often the same across every request. Prompt caching tells the API provider to store a portion of your input server-side so it doesn't need to be reprocessed on subsequent calls.
+
+On Bedrock, this is a native feature. You mark part of your input with `cache_control: {"type": "ephemeral"}`, and Bedrock handles the rest:
+
+```
+                        First call (cold)              Subsequent calls (warm)
+                        ─────────────────              ──────────────────────
+System prompt           Processed + written to cache   Read from cache (0.1x price)
+(1,871 tokens)          (1.25x price)
+
+User message            Processed normally             Processed normally
+(1,178 tokens)          (1x price)                     (1x price)
+```
+
+The cache lives server-side with a 5-minute TTL — each new request resets the timer. No infrastructure to manage, no code beyond one extra field.
+
+#### Use Case: Customer Support Bot
+
+Imagine an e-commerce support bot. Every customer conversation starts with the same 2,000-token system prompt: company policies, return procedures, product catalog rules, tone guidelines. Hundreds of customers chat concurrently, each with a different question but the same system prompt.
+
+Without caching, every chat message reprocesses those 2,000 tokens. With caching, the first message of the day pays a small write premium, and every subsequent message reads the cached prompt at 90% discount.
+
+#### Our Benchmark
+
+We sent the same AWS SA prompt (1,871-token system prompt + 1,178-token user message) twice with caching enabled:
 
 ```
 Cold call:  $0.0203  (1,871 tokens written to cache at 1.25x)
@@ -183,13 +209,44 @@ No caching: $0.0189
 
 **Result: 26.7% saving per warm call. Breaks even after 4 calls.**
 
-This is the lowest-effort optimization — add `cache_control: {"type": "ephemeral"}` to your system prompt and you're done. For any application that reuses the same system prompt across requests (which is most applications), this is free money.
+At 1,000 calls/day with the same system prompt, that's **$5.10/day saved** — roughly **$153/month** — from adding a single field to your API request.
 
 ### Strategy 7: Model Routing — Right Model for the Job
 
-Not every query needs Sonnet. A simple "What is Amazon S3?" can be answered by Haiku at 1/24th the cost. The question is: can a router correctly identify which queries are simple?
+#### What is Model Routing?
 
-We tested 5 queries ranging from simple definitions to complex architecture analysis. The router uses keyword matching, query structure analysis, and technical content detection to classify complexity.
+LLM providers offer models at different price/capability tiers. Claude Sonnet 4 costs $3.00 per million input tokens; Claude Haiku 4.5 costs $0.125 — **24x cheaper**. The catch is Haiku is less capable on complex reasoning tasks. But most real-world applications receive a mix of simple and complex queries. Model routing automatically classifies each query's complexity and sends it to the cheapest model that can handle it.
+
+```
+                    ┌─── "What is S3?"  ─────→  Haiku ($0.00024)
+User queries ───→ Router
+                    └─── "Optimize this   ───→  Sonnet ($0.02451)
+                          architecture"
+```
+
+#### Use Case: Internal Knowledge Base
+
+A company deploys an AI assistant for employees. During a typical day:
+- 60% of queries are simple lookups: "What's the VPN setup process?", "Where's the PTO policy?"
+- 25% are moderate how-to questions: "How do I configure SSO for a new team?"
+- 15% are complex analysis: "Compare our current CI/CD pipeline costs across three deployment options"
+
+Without routing, every query goes to Sonnet at full price. With routing, the 60% simple and 25% moderate queries go to Haiku — saving 85% on 85% of your traffic.
+
+#### How Our Router Classifies
+
+The router uses four independent analyzers that vote on complexity:
+
+1. **Keyword matching**: "analyze", "compare", "optimize" → complex; "what is", "list", "define" → simple
+2. **Query structure**: multiple questions or 50+ words → complex; under 10 words → simple
+3. **Context analysis**: many technical terms in conversation history → complex
+4. **Content patterns**: code blocks, math formulas, SQL → complex
+
+If any analyzer votes "complex", the query goes to Sonnet (conservative bias to protect quality).
+
+#### Our Benchmark
+
+We tested 5 queries at different complexity levels, calling both Haiku and Sonnet for each to measure the actual cost difference:
 
 | Query | Router Decision | Haiku Cost | Sonnet Cost | Saving |
 |---|---|---|---|---|
@@ -199,9 +256,9 @@ We tested 5 queries ranging from simple definitions to complex architecture anal
 | Complex architecture optimization | sonnet | — | $0.02451 | — |
 | Aurora Serverless v2 trade-offs | sonnet | — | $0.01553 | — |
 
-**Result: 35.1% saving across the query mix.** 3 out of 5 queries routed to Haiku. The router correctly identified that architecture optimization requires Sonnet's reasoning capability while factual lookups don't.
+**Result: 35.1% saving across the query mix.** 3 out of 5 queries routed to Haiku. The router correctly kept complex architecture questions on Sonnet while routing factual lookups to Haiku.
 
-The real-world saving depends on your query distribution. If 60%+ of your traffic is simple/moderate queries (common in customer-facing applications), routing can cut costs by 30-50%.
+In the VPC setup query — a moderate how-to question — routing to Haiku saved $0.0148 on a single call. That query alone accounts for 67% of the total routing savings. This illustrates why moderate queries matter most: they're expensive enough on Sonnet to generate meaningful savings, but simple enough for Haiku to handle.
 
 ### Strategy 8: Batch Processing — Trade Time for Money
 

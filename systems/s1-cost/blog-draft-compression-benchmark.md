@@ -102,11 +102,13 @@ Each sample includes a long context, a question, and ground truth answers — en
 
 ### Parameter Sweep
 
-We tested 10 strategy variants to find optimal configurations:
+Each compression strategy has parameters that control how aggressively it compresses. We tested 10 variants to find the best trade-off between compression and quality:
 
-- **LLMLingua-2**: rate=0.5 (single config, BERT-based)
-- **SemanticSummarizer**: 4 ratios (0.5, 0.6, 0.7, 0.8)
-- **RelevanceFilter**: 5 threshold/chunk combinations (t0.7/c10, t0.5/c20, t0.3/c30, t0.3/c50, t0.3/c80)
+- **LLMLingua-2**: `rate=0.5` — target keeping 50% of the original tokens. BERT scores every token's importance, then prunes the bottom half. Single config because the rate maps directly to compression ratio.
+
+- **SemanticSummarizer**: `max_length_ratio` at 0.5, 0.6, 0.7, 0.8 — tells Haiku to summarize to roughly 50%, 60%, 70%, or 80% of the original length. We tested four ratios to see if Haiku actually follows the length instruction (spoiler: it mostly doesn't — all four produced similar compression).
+
+- **RelevanceFilter**: 5 combinations of `similarity_threshold` and `max_chunks` — threshold is the minimum relevance score a chunk must have to be kept (lower = more permissive, keeps more text); max_chunks caps the total number of chunks retained (higher = keeps more text). We swept from aggressive (t0.7/c10: high bar, few chunks) to conservative (t0.3/c80: low bar, many chunks) to map the compression-quality frontier.
 
 ### Evaluation
 

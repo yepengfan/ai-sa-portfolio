@@ -1,125 +1,73 @@
-# 🏆 Compression Benchmark Results Summary
+# Compression Benchmark Results
 
-## 📊 **Executive Summary**
+## Experiment Setup
 
-**Total Cost: $0.0725** (7.25¢) for **120 test cases** across **9 compression strategies**
+- **Baseline model**: Claude Sonnet 4 (Bedrock, temp=0)
+- **Dataset**: LongBench (5 samples: 3 multifieldqa_en + 2 narrativeqa, 2K-10K words)
+- **Evaluation**: Token F1 vs ground truth, LLM-as-judge (Haiku YES/NO), ROUGE-L vs baseline
+- **Total cost**: $0.87 (two rounds)
 
-### **🥇 Winners by Category**
+Tested 6 strategies initially; narrowed to 3 with practical value after first round.
 
-| Category | Winner | Performance | Notes |
-|----------|--------|-------------|-------|
-| **Best Compression** | **Structure Optimizer** | **44.4% savings** | JSON/bullet optimization |
-| **Fastest Processing** | **Advanced Relevance Filter** | **0.000s** | Rule-based filtering |
-| **Most Reliable** | **Semantic Summarizer** | **100% success** | AI-powered summarization |
-| **Best Overall** | **Structure Optimizer** | **Score: 0.389** | Balance of compression & speed |
+Dropped strategies:
+- **ManualRefiner**: 4% compression on technical text (regex too simple)
+- **StructureOptimizer**: quality collapse or minimal compression
+- **LLMLingua (Haiku imitation)**: negative ROI (Haiku overhead > Sonnet savings)
 
-## 📈 **Complete Strategy Rankings**
+## Results: 3 Strategies x 10 Parameter Variants
 
-| Rank | Strategy | Compression | Speed | Success Rate | Effectiveness |
-|------|----------|-------------|-------|-------------|---------------|
-| 🥇 | **Structure Optimizer** | **44.4%** | 0.001s | 100% | **0.389** |
-| 🥈 | **Advanced Structure Optimizer** | 25.0% | 0.000s | 100% | 0.525 |
-| 🥉 | **Semantic Summarizer** | 17.6% | 1.411s | 100% | 0.619 |
-| 4th | Context Aware Summarizer | 17.3% | 1.493s | 100% | 0.624 |
-| 5th | Advanced Manual Refiner | 4.6% | 0.000s | 100% | 0.668 |
-| 6th | Manual Refiner | 4.6% | 0.000s | 100% | 0.668 |
-| 7th | LLMLingua Compressor | 15.2% | 3.343s | 100% | 0.694 |
-| 8th | Advanced Relevance Filter | 0.0% | 0.000s | 100% | 0.700 |
-| 9th | Relevance Filter | 0.0% | 0.000s | 100% | 0.700 |
+### Aggregate (5 LongBench samples)
 
-## 🎯 **Key Insights**
+| Strategy | Avg Compression | Avg Cost Saving | Judge Pass | Avg F1 | API Cost |
+|---|---|---|---|---|---|
+| **Baseline** | — | — | **4/5** | 0.055 | $0.038/call |
+| **LLMLingua-2 (BERT)** | 38.0% | 34.4% | 3/5 | 0.073 | $0 |
+| **RelevanceFilter t0.3_c30** | 84.2% | 76.3% | **4/5** | 0.091 | $0 |
+| **RelevanceFilter t0.3_c50** | 72.2% | 63.5% | **4/5** | 0.081 | $0 |
+| **RelevanceFilter t0.3_c80** | 54.3% | 48.2% | **4/5** | 0.059 | $0 |
+| SemanticSummarizer 0.5 | 79.5% | 59.6% | 3/5 | 0.034 | ~$0.003 |
+| SemanticSummarizer 0.6 | 83.6% | 66.1% | 1/5 | 0.040 | ~$0.003 |
+| SemanticSummarizer 0.7 | 78.3% | 59.4% | 2/5 | 0.042 | ~$0.003 |
+| SemanticSummarizer 0.8 | 81.4% | 64.4% | 3/5 | 0.041 | ~$0.003 |
 
-### **Surprising Winners**
-1. **Structure Optimizer dominated** - Simple format optimization (JSON/bullets) achieved the highest compression
-2. **AI strategies weren't always best** - Rule-based approaches often outperformed AI for speed
-3. **All strategies were 100% reliable** - No failures across 120 diverse test cases
+### vs Literature
 
-### **Compression Analysis**
-- **Best compression**: Structure Optimizer (44.4% text reduction)
-- **Average compression**: 14.3% across all strategies
-- **Worst performers**: Relevance filters (0% compression - they just filter, don't compress)
+| Strategy | Our Data | Literature Reference | Verdict |
+|---|---|---|---|
+| LLMLingua-2 | 38% | 30-50% | Consistent |
+| RelevanceFilter t0.3_c50 | 72% | 50-70% (Selective Context) | Slightly above, reasonable |
+| SemanticSummarizer | 76-81% | 60-80% | Consistent |
 
-### **Speed Analysis**
-- **Fastest**: Advanced Relevance Filter (instant - rule-based)
-- **Slowest**: LLMLingua Compressor (3.3s - multiple AI calls)
-- **AI strategies**: 1.4-3.3s (due to API calls)
+## Key Findings
 
-## 💰 **Cost Breakdown**
+1. **RelevanceFilter t0.3_c30 is the clear winner**: 84% compression, matches baseline quality (4/5 judge pass), zero cost. TF-IDF + Jaccard chunk selection works surprisingly well.
 
-### **Total Investment: $0.0725**
-- **255 API calls** to Claude Haiku
-- **161,245 tokens** processed
-- **3 AI strategies** tested (others are free)
+2. **"Less is more" effect observed**: LLMLingua-2 and RelevanceFilter show *higher* F1 than baseline after compression (negative F1 drop). Removing noise helps the model focus.
 
-### **Cost by Strategy**
-- Semantic Summarizer: $0.0429 (120 calls)
-- LLMLingua Compressor: $0.0265 (120 calls)
-- Context Aware Summarizer: $0.0031 (15 calls)
-- **Free strategies**: Structure, Manual, Relevance (6 strategies)
+3. **LLMLingua-2 is a reliable free baseline**: 38% compression, stable across samples (lowest variance), zero API cost. Uses local BERT model.
 
-## 🎯 **Use Case Recommendations**
+4. **SemanticSummarizer has inconsistent quality**: High compression but judge pass rate as low as 1/5. Haiku doesn't follow length instructions precisely — `max_length_ratio` parameter has limited effect.
 
-### **By Scenario**
-| Use Case | Recommended Strategy | Why |
-|----------|---------------------|-----|
-| **Maximum Compression** | Structure Optimizer | 44.4% savings, fast |
-| **Real-time Apps** | Advanced Relevance Filter | Instant processing |
-| **Production Systems** | Semantic Summarizer | Reliable, good compression |
-| **Batch Processing** | Structure Optimizer | Best overall efficiency |
-| **Cost Optimization** | Structure Optimizer | High compression, free |
+5. **Compression cost matters**: For LLM-based compression (SemanticSummarizer), Haiku API cost eats into savings. Zero-cost local methods (LLMLingua-2, RelevanceFilter) have better ROI.
 
-### **By Priority**
-- **Speed First**: Advanced Relevance Filter → Manual Refiner → Structure Optimizer
-- **Compression First**: Structure Optimizer → Advanced Structure → Semantic Summarizer
-- **Balanced**: Structure Optimizer → Semantic Summarizer → Context Aware
+## Recommendations
 
-## 📊 **Statistical Significance**
+| Scenario | Strategy | Why |
+|---|---|---|
+| Long context RAG with query | RelevanceFilter t0.3_c30-c50 | High compression, zero cost, query-aware |
+| General compression (no query) | LLMLingua-2 (rate=0.5) | Stable, zero cost, works on any text |
+| Maximum compression (quality trade-off acceptable) | SemanticSummarizer 0.5 | 80% compression, but verify output quality |
 
-### **Achieved Rigorous Standards**
-- ✅ **Sample size**: 120 test cases (vs 9 originally)
-- ✅ **Confidence level**: 95% (vs 80% originally)
-- ✅ **Statistical power**: 95% (vs low originally)
-- ✅ **Margin of error**: ±9.1% (vs ±33% originally)
-- ✅ **Publication ready**: Yes (vs no originally)
+## Limitations
 
-### **Domain Coverage**
-- 7 test categories covering diverse scenarios
-- Edge cases and boundary conditions tested
-- Domain-specific content (healthcare, legal, finance)
-- Multilingual and technical content included
+- Small sample size (n=5) — results are directional, not statistically significant
+- Token F1 is low across the board due to Sonnet's verbose outputs vs short ground truth answers; relative comparisons are meaningful, absolute values are not
+- RelevanceFilter requires a query; not applicable to query-free compression scenarios
 
-## 💡 **Blog Impact Analysis**
+## Files
 
-### **Before (9 tests, $0.002)**
-❌ "Interesting experiment but sample size too small..."
-❌ "Results might be biased or cherry-picked..."
-❌ "Need more comprehensive testing..."
-
-### **After (120 tests, $0.073)**
-✅ "Rigorous, comprehensive analysis with statistical significance!"
-✅ "Thorough methodology and diverse test cases"
-✅ "Publication-quality research - highly credible"
-
-## 🚀 **Next Steps**
-
-1. **Merge this PR** - Framework + results are ready
-2. **Write the blog post** using these authoritative results
-3. **Publish with confidence** - backed by solid statistics
-4. **Share widely** - results are citable and trustworthy
-
-## 🏁 **Conclusion**
-
-**For just 7¢, we transformed our compression analysis from a "toy experiment" into "publication-quality research" with:**
-
-- **13x more test cases** (9 → 120)
-- **95% statistical confidence** (vs 80%)
-- **Clear winner identified**: Structure Optimizer
-- **Comprehensive use case guidance**
-- **Professional credibility achieved**
-
-**The results are in - Structure Optimizer wins for most use cases, delivering 44.4% compression savings with lightning-fast processing and 100% reliability.**
-
----
-
-*Generated from comprehensive benchmark of 5 compression strategies across 120 test cases*
-*Total cost: $0.0725 | Statistical confidence: 95% | Publication ready: Yes*
+- `benchmark/longbench_compare.py` — main benchmark script
+- `benchmark/quick_compare.py` — single-prompt benchmark (system prompt + user message)
+- `benchmark/llmlingua2_wrapper.py` — LLMLingua-2 BERT wrapper
+- `benchmark/results/longbench_results.json` — full results with outputs
+- `benchmark/results/compression_results.json` — quick_compare results

@@ -12,10 +12,10 @@ MODELS = {
         "name": "Claude Haiku 4.5"
     },
     "sonnet": {
-        "id": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "id": "us.anthropic.claude-sonnet-4-20250514-v1:0",
         "input_cost_per_1k": 0.003,
         "output_cost_per_1k": 0.015,
-        "name": "Claude Sonnet 3.5"
+        "name": "Claude Sonnet 4"
     }
 }
 

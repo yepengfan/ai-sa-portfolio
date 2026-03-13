@@ -44,7 +44,7 @@ class SemanticSummarizer:
                 modelId=self.summarizer_model,
                 body=json.dumps({
                     "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": min(1024, target_length // 3),  # Conservative token estimate
+                    "max_tokens": target_length // 3,  # Let ratio control output length
                     "messages": [
                         {"role": "user", "content": summarization_prompt}
                     ],
@@ -149,7 +149,7 @@ class ContextAwareSummarizer(SemanticSummarizer):
                 modelId=self.summarizer_model,
                 body=json.dumps({
                     "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": min(1024, target_length // 3),
+                    "max_tokens": target_length // 3,
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],

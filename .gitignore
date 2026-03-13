@@ -45,6 +45,9 @@ systems/*/*.csv
 systems/*/*.json
 systems/*/*.jsonl
 
+# LongBench dataset (downloaded, ~27MB)
+systems/s1-cost/benchmark/data/
+
 # Portfolio project generated files
 portfolio/*/build/
 portfolio/*/dist/

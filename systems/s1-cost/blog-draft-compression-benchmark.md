@@ -33,16 +33,29 @@ Output: [~200-word summary]
 
 ### 3. Relevance Filter — TF-IDF + Jaccard Chunk Selection
 
-Splits the context into fixed-size chunks (~200 characters), scores each chunk's relevance to the user's query using TF-IDF cosine similarity and Jaccard overlap, then keeps only the top-scoring chunks. Two parameters control the behavior: `similarity_threshold` (minimum quality gate) and `max_chunks` (maximum quantity cap).
+This strategy answers a simple question: **which parts of this document actually matter for the user's query?** It splits the context into fixed-size chunks (~200 characters), scores each chunk's relevance to the query, then keeps only the highest-scoring ones.
 
-```
-Input:  [10,000-word document] + query: "Where does the witch live?"
-→ Score each chunk against query
-→ Keep top 30 chunks above threshold 0.3
-Output: [~2,000 words of most relevant passages]
+Two classic NLP techniques do the scoring:
+
+- **TF-IDF cosine similarity** measures how much the chunk and query share *meaningful* words. TF-IDF (Term Frequency-Inverse Document Frequency) downweights common words like "the" and "is" while amplifying distinctive terms like "witch" or "mountain". Cosine similarity then compares the weighted word vectors — a chunk about "the witch's mountain cavern" scores high against the query "Where does the witch live?" because they share rare, meaningful terms.
+
+- **Jaccard overlap** is simpler: what fraction of unique words appear in both the chunk and the query? It acts as a complementary signal — if TF-IDF misses a match due to vocabulary differences, Jaccard can catch direct word overlaps.
+
+The two scores are combined, and chunks are ranked. Two parameters control how aggressively to filter: `similarity_threshold` (minimum score to keep a chunk) and `max_chunks` (maximum number of chunks to keep).
+
+```mermaid
+graph TD
+    D["Document<br/>10,000 words"] -->|"split into ~200-char chunks"| C["50 chunks"]
+    Q["Query: 'Where does<br/>the witch live?'"] --> S["Score each chunk"]
+    C --> S
+    S -->|"TF-IDF + Jaccard"| R["Rank by relevance"]
+    R -->|"keep top 30<br/>above threshold 0.3"| O["~2,000 words<br/>(84% compressed)"]
+
+    style D fill:#ff6b6b,color:#fff
+    style O fill:#51cf66,color:#fff
 ```
 
-**Cost**: Zero. TF-IDF and Jaccard are computed locally.
+**Cost**: Zero. Both TF-IDF and Jaccard are computed locally with basic math — no model, no API call.
 
 ### 4. Structure Optimizer — Format Conversion
 

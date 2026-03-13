@@ -107,12 +107,13 @@ def run_caching_benchmark(system_prompt, user_message):
         }
 
         # Cost calculation with cache pricing
+        # Bedrock reports input_tokens (non-cached) separately from
+        # cache_creation_input_tokens and cache_read_input_tokens.
         cache_write_tokens = entry["cache_creation_input_tokens"]
         cache_read_tokens = entry["cache_read_input_tokens"]
-        regular_input_tokens = entry["input_tokens"] - cache_write_tokens - cache_read_tokens
 
         entry["cost"] = (
-            (regular_input_tokens / 1000) * PRICING["sonnet"]["input"]
+            (entry["input_tokens"] / 1000) * PRICING["sonnet"]["input"]
             + (cache_write_tokens / 1000) * PRICING["sonnet_cache_write"]
             + (cache_read_tokens / 1000) * PRICING["sonnet_cache_read"]
             + (entry["output_tokens"] / 1000) * PRICING["sonnet"]["output"]
@@ -124,9 +125,11 @@ def run_caching_benchmark(system_prompt, user_message):
               f"cache_write={cache_write_tokens}, cache_read={cache_read_tokens}, "
               f"${entry['cost']:.4f}, {latency:.1f}s")
 
-    # Summary
-    no_cache_cost = calculate_cost(results["cold"]["input_tokens"],
-                                   results["cold"]["output_tokens"])
+    # Summary — no-cache baseline uses total input tokens (regular + cached)
+    total_input = (results["cold"]["input_tokens"]
+                   + results["cold"]["cache_creation_input_tokens"]
+                   + results["cold"]["cache_read_input_tokens"])
+    no_cache_cost = calculate_cost(total_input, results["cold"]["output_tokens"])
     warm_cost = results["warm"]["cost"]
     saving = no_cache_cost - warm_cost
 
@@ -136,7 +139,8 @@ def run_caching_benchmark(system_prompt, user_message):
           f"(cache write costs 1.25x on {results['cold']['cache_creation_input_tokens']} tokens)")
     print(f"  Warm (cache hit):  ${warm_cost:.4f}")
     print(f"  Saving per warm call: ${saving:.4f} ({saving/no_cache_cost*100:.1f}%)")
-    print(f"  Break-even: {results['cold']['cost'] / saving:.1f} warm calls to recoup cold write" if saving > 0 else "  No savings detected")
+    cold_premium = results["cold"]["cost"] - no_cache_cost
+    print(f"  Break-even: {cold_premium / saving:.1f} warm calls to recoup cold write premium" if saving > 0 else "  No savings detected")
 
     results["summary"] = {
         "no_cache_cost": no_cache_cost,

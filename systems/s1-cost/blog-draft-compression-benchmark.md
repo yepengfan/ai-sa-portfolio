@@ -43,18 +43,6 @@ Two classic NLP techniques do the scoring:
 
 The two scores are combined, and chunks are ranked. Two parameters control how aggressively to filter: `similarity_threshold` (minimum score to keep a chunk) and `max_chunks` (maximum number of chunks to keep).
 
-```mermaid
-graph TD
-    D["Document<br/>10,000 words"] -->|"split into ~200-char chunks"| C["50 chunks"]
-    Q["Query: 'Where does<br/>the witch live?'"] --> S["Score each chunk"]
-    C --> S
-    S -->|"TF-IDF + Jaccard"| R["Rank by relevance"]
-    R -->|"keep top 30<br/>above threshold 0.3"| O["~2,000 words<br/>(84% compressed)"]
-
-    style D fill:#ff6b6b,color:#fff
-    style O fill:#51cf66,color:#fff
-```
-
 **Cost**: Zero. Both TF-IDF and Jaccard are computed locally with basic math — no model, no API call.
 
 ### 4. Structure Optimizer — Format Conversion

@@ -173,33 +173,64 @@ Compression reduces what you send. But there are other ways to cut costs: cache 
 
 ### Strategy 6: Prompt Caching — Pay Once, Reuse Cheap
 
-#### What is Prompt Caching?
+**Core idea: The system prompt is the same every time. Why pay to process it from scratch on every call?**
 
-Every time you call an LLM API, the model processes your entire input from scratch — including the system prompt, which is often the same across every request. Prompt caching tells the API provider to store a portion of your input server-side so it doesn't need to be reprocessed on subsequent calls.
+Every LLM API call processes your entire input — including the system prompt, which rarely changes between requests. Prompt caching tells the provider to store this repeated prefix server-side. The first call writes it to cache (small premium); every subsequent call reads from cache at 90% discount.
 
-On Bedrock, this is a native feature. You mark part of your input with `cache_control: {"type": "ephemeral"}`, and Bedrock handles the rest:
-
-```
-                        First call (cold)              Subsequent calls (warm)
-                        ─────────────────              ──────────────────────
-System prompt           Processed + written to cache   Read from cache (0.1x price)
-(1,871 tokens)          (1.25x price)
-
-User message            Processed normally             Processed normally
-(1,178 tokens)          (1x price)                     (1x price)
-```
-
-The cache lives server-side with a 5-minute TTL — each new request resets the timer. No infrastructure to manage, no code beyond one extra field.
+On Bedrock, this is a native feature requiring one extra field: `cache_control: {"type": "ephemeral"}`. The cache has a 5-minute TTL that resets on each use. No infrastructure to manage.
 
 #### Use Case: Customer Support Bot
 
-Imagine an e-commerce support bot. Every customer conversation starts with the same 2,000-token system prompt: company policies, return procedures, product catalog rules, tone guidelines. Hundreds of customers chat concurrently, each with a different question but the same system prompt.
+An e-commerce company runs a support bot on Bedrock. Every conversation uses the same 2,000-token system prompt (policies, procedures, product rules).
 
-Without caching, every chat message reprocesses those 2,000 tokens. With caching, the first message of the day pays a small write premium, and every subsequent message reads the cached prompt at 90% discount.
+**Without caching** — 500 conversations/day, each reprocessing the same 2,000 tokens:
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Customer A   │     │  Customer B   │     │  Customer C   │
+│  "Where's my  │     │  "Return      │     │  "Do you ship │
+│   order?"     │     │   policy?"    │     │   to Alaska?" │
+└──────┬───────┘     └──────┬───────┘     └──────┬───────┘
+       │                    │                    │
+       ▼                    ▼                    ▼
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│ System prompt │     │ System prompt │     │ System prompt │
+│ (2,000 tokens)│     │ (2,000 tokens)│     │ (2,000 tokens)│
+│ *** FULL ***  │     │ *** FULL ***  │     │ *** FULL ***  │
+│ *** PRICE *** │     │ *** PRICE *** │     │ *** PRICE *** │
+│    $0.006     │     │    $0.006     │     │    $0.006     │
+├──────────────┤     ├──────────────┤     ├──────────────┤
+│ User question │     │ User question │     │ User question │
+│  (100 tokens) │     │  (100 tokens) │     │  (100 tokens) │
+└──────────────┘     └──────────────┘     └──────────────┘
+
+System prompt cost: 500 × $0.006 = $3.00/day
+```
+
+**With caching** — first call writes cache, remaining 499 calls read at 0.1x:
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Customer A   │     │  Customer B   │     │  Customer C   │
+│  (first call) │     │  (cache hit)  │     │  (cache hit)  │
+└──────┬───────┘     └──────┬───────┘     └──────┬───────┘
+       │                    │                    │
+       ▼                    ▼                    ▼
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│ System prompt │     │ System prompt │     │ System prompt │
+│ CACHE WRITE   │     │ CACHE READ    │     │ CACHE READ    │
+│ 1.25x = $0.008│     │ 0.1x = $0.001 │     │ 0.1x = $0.001 │
+├──────────────┤     ├──────────────┤     ├──────────────┤
+│ User question │     │ User question │     │ User question │
+│  (100 tokens) │     │  (100 tokens) │     │  (100 tokens) │
+└──────────────┘     └──────────────┘     └──────────────┘
+
+System prompt cost: $0.008 + 499 × $0.001 = $0.51/day  (was $3.00)
+```
 
 #### Our Benchmark
 
-We sent the same AWS SA prompt (1,871-token system prompt + 1,178-token user message) twice with caching enabled:
+We tested with our AWS SA prompt (1,871-token system prompt + 1,178-token user message):
 
 ```
 Cold call:  $0.0203  (1,871 tokens written to cache at 1.25x)
@@ -209,44 +240,87 @@ No caching: $0.0189
 
 **Result: 26.7% saving per warm call. Breaks even after 4 calls.**
 
-At 1,000 calls/day with the same system prompt, that's **$5.10/day saved** — roughly **$153/month** — from adding a single field to your API request.
+At 1,000 calls/day: **$5.10/day → $153/month saved** from adding one field to the API request.
 
 ### Strategy 7: Model Routing — Right Model for the Job
 
-#### What is Model Routing?
+**Core idea: Not every question requires the most expensive model. Route simple questions to a cheap model, save the expensive model for hard problems.**
 
-LLM providers offer models at different price/capability tiers. Claude Sonnet 4 costs $3.00 per million input tokens; Claude Haiku 4.5 costs $0.125 — **24x cheaper**. The catch is Haiku is less capable on complex reasoning tasks. But most real-world applications receive a mix of simple and complex queries. Model routing automatically classifies each query's complexity and sends it to the cheapest model that can handle it.
-
-```
-                    ┌─── "What is S3?"  ─────→  Haiku ($0.00024)
-User queries ───→ Router
-                    └─── "Optimize this   ───→  Sonnet ($0.02451)
-                          architecture"
-```
+Claude Sonnet 4 costs $3.00 per million input tokens. Claude Haiku 4.5 costs $0.125 — **24x cheaper**. Haiku can't match Sonnet on complex reasoning, but for "What is S3?" or "How do I create a VPC?", the answers are equally good. Model routing classifies each query's complexity and sends it to the cheapest model that can handle it.
 
 #### Use Case: Internal Knowledge Base
 
-A company deploys an AI assistant for employees. During a typical day:
-- 60% of queries are simple lookups: "What's the VPN setup process?", "Where's the PTO policy?"
-- 25% are moderate how-to questions: "How do I configure SSO for a new team?"
-- 15% are complex analysis: "Compare our current CI/CD pipeline costs across three deployment options"
+A company deploys an AI assistant for 1,000 employees. Typical daily traffic:
 
-Without routing, every query goes to Sonnet at full price. With routing, the 60% simple and 25% moderate queries go to Haiku — saving 85% on 85% of your traffic.
+```
+1,000 queries/day
+│
+├── 60% Simple (600)                    ├── 25% Moderate (250)             ├── 15% Complex (150)
+│   "What's the VPN setup?"            │   "How to configure SSO?"        │   "Compare CI/CD costs
+│   "Where's the PTO policy?"          │   "Set up a new dev env"         │    across 3 options"
+│   "Office wifi password?"            │   "Debug this deploy error"      │   "Design HA architecture"
+```
+
+**Without routing** — all 1,000 queries go to Sonnet:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    All queries → Sonnet                      │
+│                                                             │
+│  "VPN setup?" ──→ Sonnet ($0.015)                          │
+│  "PTO policy?" ──→ Sonnet ($0.015)                          │
+│  "Configure SSO" ──→ Sonnet ($0.015)                        │
+│  "Compare CI/CD" ──→ Sonnet ($0.015)                        │
+│                                                             │
+│  Daily cost: 1,000 × $0.015 = $15.00                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**With routing** — classifier sends 85% of traffic to Haiku:
+
+```
+                         ┌─────────────┐
+                         │   Router    │
+                         │  (keyword,  │
+                         │  structure, │
+                         │  context,   │
+                         │  content)   │
+                         └──────┬──────┘
+                                │
+                 ┌──────────────┼──────────────┐
+                 │ simple/moderate              │ complex
+                 ▼                              ▼
+         ┌──────────────┐              ┌──────────────┐
+         │    Haiku      │              │    Sonnet     │
+         │  $0.125/M     │              │  $3.00/M      │
+         │  850 queries  │              │  150 queries  │
+         │  = $0.53/day  │              │  = $2.25/day  │
+         └──────────────┘              └──────────────┘
+
+         Daily cost: $0.53 + $2.25 = $2.78  (was $15.00)
+```
 
 #### How Our Router Classifies
 
-The router uses four independent analyzers that vote on complexity:
+Four independent analyzers vote on complexity:
 
-1. **Keyword matching**: "analyze", "compare", "optimize" → complex; "what is", "list", "define" → simple
-2. **Query structure**: multiple questions or 50+ words → complex; under 10 words → simple
-3. **Context analysis**: many technical terms in conversation history → complex
-4. **Content patterns**: code blocks, math formulas, SQL → complex
+```
+Query: "How do I set up a VPC with public and private subnets?"
+       │
+       ├─→ Keyword analyzer:   "how to" detected → MODERATE
+       ├─→ Structure analyzer:  12 words, 1 question → MODERATE
+       ├─→ Context analyzer:    no prior technical context → SIMPLE
+       └─→ Content analyzer:    no code/math patterns → SIMPLE
 
-If any analyzer votes "complex", the query goes to Sonnet (conservative bias to protect quality).
+       Votes: 0 complex, 2 moderate, 2 simple
+       Rule: no complex votes, 2+ moderate → MODERATE → Haiku
+```
+
+Conservative bias: if *any* analyzer votes "complex", the query goes to Sonnet. Better to overspend on one query than return a bad answer.
 
 #### Our Benchmark
 
-We tested 5 queries at different complexity levels, calling both Haiku and Sonnet for each to measure the actual cost difference:
+We tested 5 queries, calling both Haiku and Sonnet for each:
 
 | Query | Router Decision | Haiku Cost | Sonnet Cost | Saving |
 |---|---|---|---|---|
@@ -256,22 +330,27 @@ We tested 5 queries at different complexity levels, calling both Haiku and Sonne
 | Complex architecture optimization | sonnet | — | $0.02451 | — |
 | Aurora Serverless v2 trade-offs | sonnet | — | $0.01553 | — |
 
-**Result: 35.1% saving across the query mix.** 3 out of 5 queries routed to Haiku. The router correctly kept complex architecture questions on Sonnet while routing factual lookups to Haiku.
-
-In the VPC setup query — a moderate how-to question — routing to Haiku saved $0.0148 on a single call. That query alone accounts for 67% of the total routing savings. This illustrates why moderate queries matter most: they're expensive enough on Sonnet to generate meaningful savings, but simple enough for Haiku to handle.
+**Result: 35.1% saving across the query mix.** The VPC query — a moderate how-to — saved $0.0148 alone, showing that moderate queries generate the most savings: expensive enough on Sonnet to matter, simple enough for Haiku to handle.
 
 ### Strategy 8: Batch Processing — Trade Time for Money
 
-Bedrock Batch Inference offers a flat 50% discount on all token costs. The trade-off: results arrive within 24 hours instead of seconds.
+**Core idea: If you don't need answers in real-time, you can get the exact same output at half the price.**
+
+Bedrock Batch Inference queues your requests and processes them within 24 hours. In exchange for giving up instant responses, you get a flat 50% discount on all token costs. Same model, same output quality — just delayed.
+
+```
+Real-time:   Request ──→ Response (seconds)     $0.025/call
+Batch:       Request ──→ Queue ──→ Response (≤24h)  $0.012/call
+```
 
 | Model | Realtime | Batch | Saving |
 |---|---|---|---|
 | Sonnet | $0.02451 | $0.01225 | 50.0% |
 | Haiku | $0.00102 | $0.00051 | 50.0% |
 
-At scale (1,000 Sonnet calls/day), that's **$367/month saved** — with zero code changes to the prompt or output.
+At scale (1,000 Sonnet calls/day), that's **$367/month saved** with zero code changes to prompt or output.
 
-Best for: nightly evaluation runs, bulk document processing, training data generation — anything where you don't need results in real-time.
+Best for: nightly evaluation runs, bulk document processing, training data generation, compliance reviews — anything where you don't need results immediately.
 
 *Note: Batch results are based on Bedrock's published pricing. Caching and routing results are from real API measurements.*
 

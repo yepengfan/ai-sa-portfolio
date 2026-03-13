@@ -185,48 +185,45 @@ An e-commerce company runs a support bot on Bedrock. Every conversation uses the
 
 **Without caching** — 500 conversations/day, each reprocessing the same 2,000 tokens:
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Customer A   │     │  Customer B   │     │  Customer C   │
-│  "Where's my  │     │  "Return      │     │  "Do you ship │
-│   order?"     │     │   policy?"    │     │   to Alaska?" │
-└──────┬───────┘     └──────┬───────┘     └──────┬───────┘
-       │                    │                    │
-       ▼                    ▼                    ▼
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│ System prompt │     │ System prompt │     │ System prompt │
-│ (2,000 tokens)│     │ (2,000 tokens)│     │ (2,000 tokens)│
-│ *** FULL ***  │     │ *** FULL ***  │     │ *** FULL ***  │
-│ *** PRICE *** │     │ *** PRICE *** │     │ *** PRICE *** │
-│    $0.006     │     │    $0.006     │     │    $0.006     │
-├──────────────┤     ├──────────────┤     ├──────────────┤
-│ User question │     │ User question │     │ User question │
-│  (100 tokens) │     │  (100 tokens) │     │  (100 tokens) │
-└──────────────┘     └──────────────┘     └──────────────┘
+```mermaid
+graph TD
+    A["Customer A<br/>'Where's my order?'"] --> S1["System Prompt<br/>2,000 tokens<br/>FULL PRICE $0.006"]
+    B["Customer B<br/>'Return policy?'"] --> S2["System Prompt<br/>2,000 tokens<br/>FULL PRICE $0.006"]
+    C["Customer C<br/>'Ship to Alaska?'"] --> S3["System Prompt<br/>2,000 tokens<br/>FULL PRICE $0.006"]
+    S1 --> M1["+ User question<br/>100 tokens"]
+    S2 --> M2["+ User question<br/>100 tokens"]
+    S3 --> M3["+ User question<br/>100 tokens"]
+    M1 --> R["Sonnet"]
+    M2 --> R
+    M3 --> R
 
-System prompt cost: 500 × $0.006 = $3.00/day
+    style S1 fill:#ff6b6b,color:#fff
+    style S2 fill:#ff6b6b,color:#fff
+    style S3 fill:#ff6b6b,color:#fff
 ```
+
+> System prompt cost: 500 x $0.006 = **$3.00/day**
 
 **With caching** — first call writes cache, remaining 499 calls read at 0.1x:
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Customer A   │     │  Customer B   │     │  Customer C   │
-│  (first call) │     │  (cache hit)  │     │  (cache hit)  │
-└──────┬───────┘     └──────┬───────┘     └──────┬───────┘
-       │                    │                    │
-       ▼                    ▼                    ▼
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│ System prompt │     │ System prompt │     │ System prompt │
-│ CACHE WRITE   │     │ CACHE READ    │     │ CACHE READ    │
-│ 1.25x = $0.008│     │ 0.1x = $0.001 │     │ 0.1x = $0.001 │
-├──────────────┤     ├──────────────┤     ├──────────────┤
-│ User question │     │ User question │     │ User question │
-│  (100 tokens) │     │  (100 tokens) │     │  (100 tokens) │
-└──────────────┘     └──────────────┘     └──────────────┘
+```mermaid
+graph TD
+    A["Customer A<br/>(first call)"] --> S1["System Prompt<br/>CACHE WRITE<br/>1.25x = $0.008"]
+    B["Customer B<br/>(cache hit)"] --> S2["System Prompt<br/>CACHE READ<br/>0.1x = $0.001"]
+    C["Customer C<br/>(cache hit)"] --> S3["System Prompt<br/>CACHE READ<br/>0.1x = $0.001"]
+    S1 --> M1["+ User question<br/>100 tokens"]
+    S2 --> M2["+ User question<br/>100 tokens"]
+    S3 --> M3["+ User question<br/>100 tokens"]
+    M1 --> R["Sonnet"]
+    M2 --> R
+    M3 --> R
 
-System prompt cost: $0.008 + 499 × $0.001 = $0.51/day  (was $3.00)
+    style S1 fill:#ffa94d,color:#fff
+    style S2 fill:#51cf66,color:#fff
+    style S3 fill:#51cf66,color:#fff
 ```
+
+> System prompt cost: $0.008 + 499 x $0.001 = **$0.51/day** (was $3.00)
 
 #### Our Benchmark
 
@@ -252,68 +249,64 @@ Claude Sonnet 4 costs $3.00 per million input tokens. Claude Haiku 4.5 costs $0.
 
 A company deploys an AI assistant for 1,000 employees. Typical daily traffic:
 
-```
-1,000 queries/day
-│
-├── 60% Simple (600)                    ├── 25% Moderate (250)             ├── 15% Complex (150)
-│   "What's the VPN setup?"            │   "How to configure SSO?"        │   "Compare CI/CD costs
-│   "Where's the PTO policy?"          │   "Set up a new dev env"         │    across 3 options"
-│   "Office wifi password?"            │   "Debug this deploy error"      │   "Design HA architecture"
+```mermaid
+graph LR
+    Q["1,000 queries/day"] --> S["60% Simple (600)<br/>'VPN setup?'<br/>'PTO policy?'"]
+    Q --> M["25% Moderate (250)<br/>'Configure SSO'<br/>'Debug deploy error'"]
+    Q --> C["15% Complex (150)<br/>'Compare CI/CD costs'<br/>'Design HA architecture'"]
 ```
 
 **Without routing** — all 1,000 queries go to Sonnet:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    All queries → Sonnet                      │
-│                                                             │
-│  "VPN setup?" ──→ Sonnet ($0.015)                          │
-│  "PTO policy?" ──→ Sonnet ($0.015)                          │
-│  "Configure SSO" ──→ Sonnet ($0.015)                        │
-│  "Compare CI/CD" ──→ Sonnet ($0.015)                        │
-│                                                             │
-│  Daily cost: 1,000 × $0.015 = $15.00                       │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    S["Simple queries"] --> Sonnet["Sonnet<br/>$3.00/M tokens"]
+    M["Moderate queries"] --> Sonnet
+    C["Complex queries"] --> Sonnet
+    Sonnet --> Cost["1,000 x $0.015<br/>= $15.00/day"]
+
+    style Sonnet fill:#ff6b6b,color:#fff
+    style Cost fill:#ff6b6b,color:#fff
 ```
 
 **With routing** — classifier sends 85% of traffic to Haiku:
 
-```
-                         ┌─────────────┐
-                         │   Router    │
-                         │  (keyword,  │
-                         │  structure, │
-                         │  context,   │
-                         │  content)   │
-                         └──────┬──────┘
-                                │
-                 ┌──────────────┼──────────────┐
-                 │ simple/moderate              │ complex
-                 ▼                              ▼
-         ┌──────────────┐              ┌──────────────┐
-         │    Haiku      │              │    Sonnet     │
-         │  $0.125/M     │              │  $3.00/M      │
-         │  850 queries  │              │  150 queries  │
-         │  = $0.53/day  │              │  = $2.25/day  │
-         └──────────────┘              └──────────────┘
+```mermaid
+graph TD
+    Q["Incoming Query"] --> R{"Router<br/>(keyword, structure,<br/>context, content)"}
+    R -->|"simple / moderate<br/>850 queries"| H["Haiku<br/>$0.125/M tokens<br/>850 queries = $0.53/day"]
+    R -->|"complex<br/>150 queries"| S["Sonnet<br/>$3.00/M tokens<br/>150 queries = $2.25/day"]
+    H --> T["Daily cost: $0.53 + $2.25 = $2.78"]
+    S --> T
 
-         Daily cost: $0.53 + $2.25 = $2.78  (was $15.00)
+    style H fill:#51cf66,color:#fff
+    style S fill:#ffa94d,color:#fff
+    style T fill:#339af0,color:#fff
 ```
+
+> Daily cost: **$2.78** (was $15.00)
 
 #### How Our Router Classifies
 
 Four independent analyzers vote on complexity:
 
-```
-Query: "How do I set up a VPC with public and private subnets?"
-       │
-       ├─→ Keyword analyzer:   "how to" detected → MODERATE
-       ├─→ Structure analyzer:  12 words, 1 question → MODERATE
-       ├─→ Context analyzer:    no prior technical context → SIMPLE
-       └─→ Content analyzer:    no code/math patterns → SIMPLE
+```mermaid
+graph LR
+    Q["'How do I set up a VPC<br/>with public and<br/>private subnets?'"] --> K["Keyword<br/>'how to' detected<br/>MODERATE"]
+    Q --> S["Structure<br/>12 words, 1 question<br/>MODERATE"]
+    Q --> X["Context<br/>no tech context<br/>SIMPLE"]
+    Q --> C["Content<br/>no code/math<br/>SIMPLE"]
+    K --> V{"Vote<br/>0 complex<br/>2 moderate<br/>2 simple"}
+    S --> V
+    X --> V
+    C --> V
+    V -->|"2+ moderate,<br/>0 complex"| H["MODERATE → Haiku"]
 
-       Votes: 0 complex, 2 moderate, 2 simple
-       Rule: no complex votes, 2+ moderate → MODERATE → Haiku
+    style K fill:#ffa94d,color:#fff
+    style S fill:#ffa94d,color:#fff
+    style X fill:#51cf66,color:#fff
+    style C fill:#51cf66,color:#fff
+    style H fill:#51cf66,color:#fff
 ```
 
 Conservative bias: if *any* analyzer votes "complex", the query goes to Sonnet. Better to overspend on one query than return a bad answer.
@@ -338,9 +331,17 @@ We tested 5 queries, calling both Haiku and Sonnet for each:
 
 Bedrock Batch Inference queues your requests and processes them within 24 hours. In exchange for giving up instant responses, you get a flat 50% discount on all token costs. Same model, same output quality — just delayed.
 
-```
-Real-time:   Request ──→ Response (seconds)     $0.025/call
-Batch:       Request ──→ Queue ──→ Response (≤24h)  $0.012/call
+```mermaid
+graph LR
+    subgraph "Real-time — $0.025/call"
+        A1["Request"] -->|seconds| B1["Response"]
+    end
+    subgraph "Batch — $0.012/call (50% off)"
+        A2["Request"] --> Q2["Queue"] -->|"≤ 24 hours"| B2["Response"]
+    end
+
+    style B1 fill:#ff6b6b,color:#fff
+    style B2 fill:#51cf66,color:#fff
 ```
 
 | Model | Realtime | Batch | Saving |

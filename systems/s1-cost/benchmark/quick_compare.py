@@ -24,22 +24,15 @@ from strategies.compression.relevance_filter import RelevanceFilter
 from strategies.compression.structure_optimizer import StructureOptimizer
 from strategies.compression.llmlingua_compressor import LLMLinguaCompressor
 from benchmark.llmlingua2_wrapper import OriginalLLMLingua2
-from utils.config import MODELS, AWS_REGION
+from utils.config import MODELS, PRICING, AWS_REGION
 
 # ---------------------------------------------------------------------------
-# Config (pricing from utils/config.py)
+# Config
 # ---------------------------------------------------------------------------
 
 SONNET_MODEL_ID = MODELS["sonnet"]["id"]
 MAX_TOKENS = 512
 TEMPERATURE = 0
-
-PRICING = {
-    "sonnet": {"input": MODELS["sonnet"]["input_cost_per_1k"],
-               "output": MODELS["sonnet"]["output_cost_per_1k"]},
-    "haiku":  {"input": MODELS["haiku"]["input_cost_per_1k"],
-               "output": MODELS["haiku"]["output_cost_per_1k"]},
-}
 
 BENCHMARK_DIR = Path(__file__).resolve().parent
 RESULTS_DIR = BENCHMARK_DIR / "results"

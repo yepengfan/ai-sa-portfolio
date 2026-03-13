@@ -16,26 +16,16 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import boto3
 
+from utils.config import MODELS, PRICING, AWS_REGION
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 
-SONNET_MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
-HAIKU_MODEL_ID = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
-AWS_REGION = "us-east-1"
+SONNET_MODEL_ID = MODELS["sonnet"]["id"]
+HAIKU_MODEL_ID = MODELS["haiku"]["id"]
 MAX_TOKENS = 1024
 TEMPERATURE = 0
-
-PRICING = {
-    "sonnet": {"input": 0.003, "output": 0.015},
-    "haiku":  {"input": 0.000125, "output": 0.000625},
-    # Caching: write = 1.25x input, read = 0.1x input
-    "sonnet_cache_write": 0.00375,
-    "sonnet_cache_read":  0.0003,
-    # Batch: 50% of on-demand
-    "sonnet_batch": {"input": 0.0015, "output": 0.0075},
-    "haiku_batch":  {"input": 0.0000625, "output": 0.0003125},
-}
 
 BENCHMARK_DIR = Path(__file__).resolve().parent
 RESULTS_DIR = BENCHMARK_DIR / "results"
@@ -395,10 +385,7 @@ def run_benchmark():
             "output_tokens": bl_usage["output_tokens"],
             "cost": bl_cost,
         },
-        "caching": {
-            k: v for k, v in caching_results.items()
-            if k != "cold" or True  # keep all
-        },
+        "caching": caching_results,
         "routing": routing_results,
         "batch": batch_results,
     }

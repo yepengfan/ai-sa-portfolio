@@ -127,7 +127,7 @@ def run_benchmark():
     # ---- Calibrate: measure system prompt tokens ----
     print("Calibrating system prompt tokens...")
     cal = invoke_bedrock(system_prompt, "x")
-    sys_tokens = cal["input_tokens"] - 1  # "x" ≈ 1 token
+    sys_tokens = cal["input_tokens"] - 1  # "x" ≈ 1 token (approximate)
     print(f"  system_prompt ≈ {sys_tokens} tokens")
 
     # ---- Baseline ----

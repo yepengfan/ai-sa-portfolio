@@ -24,6 +24,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import boto3
 from rouge_score import rouge_scorer
 
+from utils.config import MODELS, PRICING, AWS_REGION
 from strategies.compression.semantic_summarizer import SemanticSummarizer
 from strategies.compression.relevance_filter import RelevanceFilter
 from benchmark.llmlingua2_wrapper import OriginalLLMLingua2
@@ -32,17 +33,10 @@ from benchmark.llmlingua2_wrapper import OriginalLLMLingua2
 # Config
 # ---------------------------------------------------------------------------
 
-SONNET_MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
-AWS_REGION = "us-east-1"
+SONNET_MODEL_ID = MODELS["sonnet"]["id"]
+HAIKU_MODEL_ID = MODELS["haiku"]["id"]
 MAX_TOKENS = 1024
 TEMPERATURE = 0
-
-PRICING = {
-    "sonnet": {"input": 0.003, "output": 0.015},
-    "haiku":  {"input": 0.000125, "output": 0.000625},
-}
-
-HAIKU_MODEL_ID = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
 
 BENCHMARK_DIR = Path(__file__).resolve().parent
 DATA_DIR = BENCHMARK_DIR / "data"

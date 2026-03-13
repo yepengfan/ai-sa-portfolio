@@ -69,11 +69,11 @@ Output: "normalized least mean square algorithm engaged PLMS-PPIC method"
 
 **Cost**: Haiku version ~$0.002/call. BERT version: zero (local inference).
 
-## First Round: Why We Dropped Two Strategies
+## First Round: Why We Dropped Three Strategies
 
 We ran all 5 strategies (plus real LLMLingua-2) on a custom prompt — an AWS Solutions Architect scenario with a ~1,800-token system prompt and ~800-token architecture context, evaluated against Claude Sonnet 4.
 
-The results immediately revealed two strategies with limited practical value:
+The results immediately revealed three strategies with limited practical value:
 
 **Manual Refiner** achieved only 4% compression on technical text. Regex patterns designed for conversational filler ("in order to", "it is important to note that") barely match in architecture descriptions full of proper nouns and precise specifications. The approach works in theory but breaks down on domain-specific content.
 

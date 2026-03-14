@@ -1,4 +1,4 @@
-"""Allow running as: python -m cli.chat"""
+"""Allow running as: python -m cli"""
 
 from cli.chat import main
 

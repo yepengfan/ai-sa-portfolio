@@ -7,6 +7,8 @@ from utils.config import AWS_REGION
 
 NAMESPACE = "BedrockCost"
 
+_cw_client = boto3.client("cloudwatch", region_name=AWS_REGION)
+
 
 def publish_metrics(
     model_id: str,
@@ -16,14 +18,13 @@ def publish_metrics(
     caller: str = "nano-cc",
 ) -> None:
     """Send one Bedrock invocation's metrics to CloudWatch."""
-    client = boto3.client("cloudwatch", region_name=AWS_REGION)
     ts = datetime.now(timezone.utc)
     dims = [
         {"Name": "ModelId", "Value": model_id},
         {"Name": "Caller", "Value": caller},
     ]
 
-    client.put_metric_data(
+    _cw_client.put_metric_data(
         Namespace=NAMESPACE,
         MetricData=[
             {

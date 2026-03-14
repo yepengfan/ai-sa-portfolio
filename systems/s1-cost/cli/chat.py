@@ -17,15 +17,19 @@ except ImportError:
     _HAS_RICH = False
 
 
-def _print_assistant(text: str) -> None:
-    if _HAS_RICH:
-        _console.print(Markdown(text))
-    else:
-        print(text)
-
-
 def _print_meta(model: str, input_tokens: int, output_tokens: int, cost: float) -> None:
     print(f"  [{model} | {input_tokens} in | {output_tokens} out | ${cost:.6f}]")
+
+
+def _count_lines(text: str) -> int:
+    """Count displayed lines for cursor manipulation."""
+    if not text:
+        return 0
+    cols = _console.width if _HAS_RICH else 80
+    lines = 0
+    for line in text.split("\n"):
+        lines += max(1, -(-len(line) // cols))  # ceil division
+    return lines
 
 
 def main() -> None:
@@ -49,7 +53,10 @@ def main() -> None:
                 print(result)
                 continue
 
-            session.add_user_message(user_input)
+            # Merge pending file context into this message
+            prefix = session.consume_file_context()
+            message = f"{prefix}\n\n{user_input}" if prefix else user_input
+            session.add_user_message(message)
 
             # Stream response
             chunks: list[str] = []
@@ -70,13 +77,14 @@ def main() -> None:
                 usage = e.value or {"input_tokens": 0, "output_tokens": 0}
 
             full_text = "".join(chunks)
-            print("\n")
 
-            # Re-render with rich if available (replaces raw streaming text)
+            # Re-render with rich markdown if available
             if _HAS_RICH and full_text:
-                # Move cursor up to overwrite raw text — skip for simplicity,
-                # just show metadata below the streamed output.
-                pass
+                raw_lines = _count_lines(full_text)
+                sys.stdout.write(f"\033[{raw_lines}A\033[J")
+                _console.print(Markdown(full_text))
+            else:
+                print()
 
             input_tokens = usage["input_tokens"]
             output_tokens = usage["output_tokens"]

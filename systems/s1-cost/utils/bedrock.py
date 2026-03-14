@@ -5,6 +5,8 @@ from typing import Generator
 
 from utils.config import MODELS, AWS_REGION
 
+_bedrock_client = boto3.client("bedrock-runtime", region_name=AWS_REGION)
+
 
 def get_model_id(model_name: str) -> str:
     """Resolve short name ('sonnet', 'haiku') to full Bedrock model ID."""
@@ -23,9 +25,8 @@ def stream_converse(
     Returns (via StopIteration.value) a dict:
         {"input_tokens": int, "output_tokens": int}
     """
-    client = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
-    response = client.converse_stream(
+    response = _bedrock_client.converse_stream(
         modelId=get_model_id(model_name),
         messages=messages,
         system=[{"text": system_prompt}],

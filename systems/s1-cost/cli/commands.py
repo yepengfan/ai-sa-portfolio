@@ -50,6 +50,9 @@ def _cmd_model(arg: str, session: Session) -> str:
     return f"Switched to {MODELS[name]['name']} ({MODELS[name]['id']})"
 
 
+MAX_FILE_SIZE = 256 * 1024  # 256 KB
+
+
 def _cmd_file(arg: str, session: Session) -> str:
     path = arg.strip()
     if not path:
@@ -57,12 +60,16 @@ def _cmd_file(arg: str, session: Session) -> str:
     path = os.path.expanduser(path)
     if not os.path.isfile(path):
         return f"File not found: {path}"
+    size = os.path.getsize(path)
+    if size > MAX_FILE_SIZE:
+        return f"File too large ({size // 1024} KB). Max is {MAX_FILE_SIZE // 1024} KB."
     try:
-        content = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as f:
+            content = f.read()
     except Exception as e:
         return f"Error reading file: {e}"
-    session.add_user_message(f"<file path=\"{path}\">\n{content}\n</file>")
-    return f"File loaded ({len(content)} chars). Ask a question about it."
+    session.set_file_context(f"<file path=\"{path}\">\n{content}\n</file>")
+    return f"File loaded ({len(content)} chars). Your next message will include it as context."
 
 
 def _cmd_cost(session: Session) -> str:

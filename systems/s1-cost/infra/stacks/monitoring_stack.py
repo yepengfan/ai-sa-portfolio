@@ -11,7 +11,7 @@ from aws_cdk import (
 from constructs import Construct
 
 NAMESPACE = "BedrockCost"
-CALLERS = ["nano-cc", "benchmark"]
+CALLERS = ["ai-daily", "benchmark"]
 MODELS = ["sonnet", "haiku"]
 
 
@@ -111,11 +111,12 @@ class MonitoringStack(Stack):
                     cw.Metric(
                         namespace=NAMESPACE,
                         metric_name=metric_name,
-                        dimensions_map={"ModelId": model, "Caller": "nano-cc"},
+                        dimensions_map={"ModelId": model, "Caller": caller},
                         statistic="Sum",
                         period=Duration.minutes(5),
-                        label=f"{model} {direction}",
+                        label=f"{model} {direction} ({caller})",
                     )
+                    for caller in CALLERS
                     for model in MODELS
                     for metric_name, direction in [
                         ("InputTokens", "In"),

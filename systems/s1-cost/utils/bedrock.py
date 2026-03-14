@@ -1,7 +1,6 @@
-"""Bedrock streaming client using the Converse API."""
+"""Bedrock client using the Converse API."""
 
 import boto3
-from typing import Generator
 
 from utils.config import MODELS, AWS_REGION
 
@@ -13,36 +12,26 @@ def get_model_id(model_name: str) -> str:
     return MODELS[model_name]["id"]
 
 
-def stream_converse(
+def converse(
     model_name: str,
     messages: list[dict],
     system_prompt: str,
     max_tokens: int = 1024,
-) -> Generator[str, None, dict]:
-    """Stream a Bedrock Converse call, yielding text chunks.
+) -> dict:
+    """Non-streaming Bedrock Converse call.
 
-    Yields each text delta as it arrives.
-    Returns (via StopIteration.value) a dict:
-        {"input_tokens": int, "output_tokens": int}
+    Returns {"text": str, "input_tokens": int, "output_tokens": int}
     """
-
-    response = _bedrock_client.converse_stream(
+    response = _bedrock_client.converse(
         modelId=get_model_id(model_name),
         messages=messages,
         system=[{"text": system_prompt}],
         inferenceConfig={"maxTokens": max_tokens},
     )
-
-    usage = {"input_tokens": 0, "output_tokens": 0}
-
-    for event in response["stream"]:
-        if "contentBlockDelta" in event:
-            delta = event["contentBlockDelta"]["delta"]
-            if "text" in delta:
-                yield delta["text"]
-        elif "metadata" in event:
-            u = event["metadata"].get("usage", {})
-            usage["input_tokens"] = u.get("inputTokens", 0)
-            usage["output_tokens"] = u.get("outputTokens", 0)
-
-    return usage
+    text = response["output"]["message"]["content"][0]["text"]
+    usage = response["usage"]
+    return {
+        "text": text,
+        "input_tokens": usage["inputTokens"],
+        "output_tokens": usage["outputTokens"],
+    }

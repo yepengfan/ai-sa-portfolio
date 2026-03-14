@@ -10,4 +10,9 @@ dependencies = [
     "llmlingua>=0.2.2",
     "rouge-score>=0.1.2",
     "rich>=13.0",
+    "aws-cdk-lib>=2.180.0",
+    "constructs>=10.0.0",
 ]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]

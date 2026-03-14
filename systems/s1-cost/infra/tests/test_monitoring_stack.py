@@ -52,7 +52,7 @@ class TestAlarm:
         template.resource_count_is("AWS::CloudWatch::Alarm", 1)
 
     def test_alarm_properties(self):
-        template = _make_template(cost_threshold=10.0)
+        template = _make_template(cost_threshold=1.0)
         template.has_resource_properties(
             "AWS::CloudWatch::Alarm",
             Match.object_like({
@@ -60,7 +60,7 @@ class TestAlarm:
                 "Namespace": NAMESPACE,
                 "MetricName": "InferredCost",
                 "Statistic": "Sum",
-                "Threshold": 10.0,
+                "Threshold": 1.0,
                 "ComparisonOperator": "GreaterThanThreshold",
                 "EvaluationPeriods": 1,
                 "TreatMissingData": "notBreaching",

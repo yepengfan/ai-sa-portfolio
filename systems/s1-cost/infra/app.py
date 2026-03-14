@@ -7,7 +7,7 @@ from stacks.monitoring_stack import MonitoringStack
 
 app = cdk.App()
 
-alert_email = app.node.try_get_context("alert_email") or ""
+alert_email = app.node.try_get_context("alert_email") or "fanyepeng97@gmail.com"
 
 MonitoringStack(
     app,

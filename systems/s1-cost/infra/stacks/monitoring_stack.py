@@ -22,7 +22,7 @@ class MonitoringStack(Stack):
         construct_id: str,
         *,
         alert_email: str = "",
-        cost_threshold: float = 10.0,
+        cost_threshold: float = 1.0,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)

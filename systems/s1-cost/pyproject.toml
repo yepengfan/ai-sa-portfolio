@@ -9,4 +9,5 @@ dependencies = [
     "datasets>=4.7.0",
     "llmlingua>=0.2.2",
     "rouge-score>=0.1.2",
+    "rich>=13.0",
 ]

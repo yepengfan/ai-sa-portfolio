@@ -11,7 +11,7 @@ from aws_cdk import (
 from constructs import Construct
 
 NAMESPACE = "BedrockCost"
-CALLERS = ["ai-daily", "benchmark"]
+CALLERS = ["ai-daily"]
 MODELS = ["sonnet", "haiku"]
 
 

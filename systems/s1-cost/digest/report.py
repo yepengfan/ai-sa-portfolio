@@ -66,7 +66,7 @@ def _format_article_en(i: int, a: SummarizedArticle) -> str:
     )
 
 
-def _format_zh_report(
+def format_zh_report(
     articles: list[SummarizedArticle],
     trend_zh: str,
     stats: dict,
@@ -144,7 +144,7 @@ def _format_zh_report(
     return "\n".join(lines)
 
 
-def _format_en_report(
+def format_en_report(
     articles: list[SummarizedArticle],
     trend_en: str,
     stats: dict,
@@ -215,8 +215,8 @@ def generate_reports(
     out_dir = vault / FEED_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    zh_content = _format_zh_report(articles, trend_zh, stats, today)
-    en_content = _format_en_report(articles, trend_en, stats, today)
+    zh_content = format_zh_report(articles, trend_zh, stats, today)
+    en_content = format_en_report(articles, trend_en, stats, today)
 
     zh_path = out_dir / f"{today.isoformat()}.md"
     en_path = out_dir / f"{today.isoformat()}-en.md"
@@ -241,12 +241,13 @@ def update_dashboard(
     # Scan for existing daily reports
     date_re = re.compile(r"^(\d{4}-\d{2}-\d{2})\.md$")
     entries = []
-    for f in sorted(out_dir.iterdir(), reverse=True):
+    for f in out_dir.iterdir():
         m = date_re.match(f.name)
         if m:
             d = date.fromisoformat(m.group(1))
             if (today - d).days <= 14:
                 entries.append(d)
+    entries.sort(reverse=True)
 
     lines = [
         "---",

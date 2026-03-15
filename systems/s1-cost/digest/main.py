@@ -84,8 +84,8 @@ async def run_pipeline(args: argparse.Namespace) -> None:
 
     # Step 7: Output
     if args.stdout:
-        from digest.report import _format_zh_report
-        print("\n" + _format_zh_report(summarized, trend_zh, stats, today))
+        from digest.report import format_zh_report
+        print("\n" + format_zh_report(summarized, trend_zh, stats, today))
     else:
         zh_path, en_path = generate_reports(
             summarized, trend_zh, trend_en, stats,

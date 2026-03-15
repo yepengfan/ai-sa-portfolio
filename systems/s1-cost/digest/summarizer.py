@@ -92,23 +92,29 @@ def _parse_summary_results(text: str) -> list[dict]:
         return []
 
 
-def _enrich_descriptions(articles: list[ScoredArticle]) -> None:
-    """For articles with short descriptions, try to fetch full text."""
+async def _enrich_descriptions(articles: list[ScoredArticle]) -> None:
+    """For articles with short descriptions, try to fetch full text via trafilatura."""
     try:
         import trafilatura
     except ImportError:
         return
 
+    loop = asyncio.get_running_loop()
+
+    def _fetch_full_text(url: str) -> str | None:
+        try:
+            downloaded = trafilatura.fetch_url(url)
+            if downloaded:
+                return trafilatura.extract(downloaded)
+        except Exception:
+            pass
+        return None
+
     for a in articles:
         if len(a.description) < 100 and a.link:
-            try:
-                downloaded = trafilatura.fetch_url(a.link)
-                if downloaded:
-                    full_text = trafilatura.extract(downloaded)
-                    if full_text:
-                        a.description = full_text[:2000]
-            except Exception:
-                pass
+            full_text = await loop.run_in_executor(None, _fetch_full_text, a.link)
+            if full_text:
+                a.description = full_text[:2000]
 
 
 def _summarize_batch(
@@ -132,9 +138,9 @@ async def summarize_articles(
     no_metrics: bool = False,
 ) -> tuple[list[SummarizedArticle], float]:
     """Summarize articles with Sonnet, bilingual. Returns (summarized, total_cost)."""
-    _enrich_descriptions(articles)
+    await _enrich_descriptions(articles)
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     total_cost = 0.0
 
     # Chinese pass
@@ -182,7 +188,7 @@ async def generate_trends(
     no_metrics: bool = False,
 ) -> tuple[str, str, float]:
     """Generate trend summary in both languages. Returns (zh, en, cost)."""
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     user_text = _build_trend_input(articles)
     total_cost = 0.0
 

@@ -99,8 +99,8 @@ def _call_bedrock_with_metrics(
                 cost_usd=cost,
                 caller="ai-daily",
             )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"  [CloudWatch publish failed: {e}]")
 
     return {**result, "cost": cost}
 
@@ -126,7 +126,7 @@ def _parse_scores(text: str) -> list[dict]:
         return []
 
 
-def _score_batch(articles: list[Article], no_metrics: bool) -> list[ScoredArticle]:
+def _score_batch(articles: list[Article], no_metrics: bool) -> tuple[list[ScoredArticle], float]:
     """Score a single batch of articles."""
     user_text = _build_scoring_input(articles)
     result = _call_bedrock_with_metrics("haiku", user_text, SCORING_SYSTEM_PROMPT, no_metrics)
@@ -166,7 +166,7 @@ async def score_articles(
     """Score all articles using Haiku in batches. Returns (scored_articles, total_cost)."""
     batches = [articles[i:i + BATCH_SIZE] for i in range(0, len(articles), BATCH_SIZE)]
     semaphore = asyncio.Semaphore(MAX_CONCURRENT)
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     total_cost = 0.0
 
     async def run_batch(batch):

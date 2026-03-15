@@ -2,10 +2,9 @@
 
 import asyncio
 from dataclasses import dataclass, field
-import json
 from datetime import datetime
 
-from digest.scoring import ScoredArticle, _call_bedrock_with_metrics
+from digest.scoring import ScoredArticle, _call_bedrock_with_metrics, parse_json_response
 
 BATCH_SIZE = 10
 
@@ -81,17 +80,6 @@ def _build_trend_input(articles: list[ScoredArticle]) -> str:
     return "\n".join(lines)
 
 
-def _parse_summary_results(text: str) -> list[dict]:
-    text = text.strip()
-    if text.startswith("```"):
-        text = text.split("\n", 1)[-1].rsplit("```", 1)[0]
-    try:
-        data = json.loads(text)
-        return data.get("results", data) if isinstance(data, dict) else data
-    except json.JSONDecodeError:
-        return []
-
-
 async def _enrich_descriptions(articles: list[ScoredArticle]) -> None:
     """For articles with short descriptions, try to fetch full text via trafilatura."""
     try:
@@ -110,11 +98,17 @@ async def _enrich_descriptions(articles: list[ScoredArticle]) -> None:
             pass
         return None
 
-    for a in articles:
-        if len(a.description) < 100 and a.link:
-            full_text = await loop.run_in_executor(None, _fetch_full_text, a.link)
-            if full_text:
-                a.description = full_text[:2000]
+    to_enrich = [a for a in articles if len(a.description) < 100 and a.link]
+    if not to_enrich:
+        return
+
+    results = await asyncio.gather(*[
+        loop.run_in_executor(None, _fetch_full_text, a.link)
+        for a in to_enrich
+    ])
+    for a, full_text in zip(to_enrich, results):
+        if full_text:
+            a.description = full_text[:2000]
 
 
 def _summarize_batch(
@@ -130,7 +124,7 @@ def _summarize_batch(
     result = _call_bedrock_with_metrics(
         "sonnet", user_text, system_prompt, no_metrics, max_tokens=4096,
     )
-    return _parse_summary_results(result["text"]), result["cost"]
+    return parse_json_response(result["text"]), result["cost"]
 
 
 async def summarize_articles(

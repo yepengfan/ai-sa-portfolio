@@ -114,7 +114,7 @@ def _build_scoring_input(articles: list[Article]) -> str:
     return "\n".join(lines)
 
 
-def _parse_scores(text: str) -> list[dict]:
+def parse_json_response(text: str) -> list[dict]:
     """Extract JSON results from LLM response, handling markdown fences."""
     text = text.strip()
     if text.startswith("```"):
@@ -130,7 +130,7 @@ def _score_batch(articles: list[Article], no_metrics: bool) -> tuple[list[Scored
     """Score a single batch of articles."""
     user_text = _build_scoring_input(articles)
     result = _call_bedrock_with_metrics("haiku", user_text, SCORING_SYSTEM_PROMPT, no_metrics)
-    scores = _parse_scores(result["text"])
+    scores = parse_json_response(result["text"])
 
     scored = []
     for i, a in enumerate(articles):

@@ -53,6 +53,12 @@ portfolio/*/build/
 portfolio/*/dist/
 portfolio/*/results/
 
+# Obsidian
+.obsidian/
+
+# CDK
+cdk.out/
+
 # IDE and editors
 .vscode/
 .idea/
@@ -74,6 +80,9 @@ Thumbs.db
 logs/
 systems/*/logs/
 portfolio/*/logs/
+
+# Root-level lock files (subdirectory lock files are tracked)
+/uv.lock
 
 # Temporary files
 *.tmp
